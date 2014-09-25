@@ -5,6 +5,7 @@
 *.user
 
 #GenerateDirectoryTree
+GenerateDirectoryTree/bin
 GenerateDirectoryTree/Debug
 GenerateDirectoryTree/Release
 GenerateDirectoryTree/ipch
