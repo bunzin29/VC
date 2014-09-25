@@ -39,7 +39,7 @@ namespace GenerateDirectoryTree {
 			mMain = gcnew Main();
 
 #ifdef _DEBUG
-			lb_in_dir->Items->Add("C:\\fito\\job\\ACC\\ACC404\\AVC\\svn\\src");
+			lb_in_dir->Items->Add("E:\\GitHub\\VC\\src\\GenerateDirectoryTree\\bin\\05_ãcéñò^(CV#3)");
 #endif
 
 		}

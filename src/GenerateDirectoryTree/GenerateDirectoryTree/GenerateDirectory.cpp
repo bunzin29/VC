@@ -71,7 +71,7 @@ void GenerateDirectory::Init()
 	if (mDirPath != nullptr && mFileName != nullptr) {
 
 	} else {
-		path = "";
+		path = System::Windows::Forms::Application::StartupPath;
 
 		fileName = mCurrentDir;
 
@@ -82,8 +82,7 @@ void GenerateDirectory::Init()
 	// OutputFileƒNƒ‰ƒX
 	mOfile = gcnew OutputFile();
 	// o—Íæİ’è
-	mOfile->Init(path, file, ext, false);
-//	mOfile->Init(path, file, ext, true);
+	mOfile->Init(path, file, ext);
 }
 
 // Œãˆ—

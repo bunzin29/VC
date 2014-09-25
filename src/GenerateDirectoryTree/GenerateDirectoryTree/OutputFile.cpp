@@ -7,31 +7,18 @@ OutputFile::OutputFile(void)
 }
 
 // 初期化
-void OutputFile::Init(String^ path, String^ file, String^ ext, bool excel)
+void OutputFile::Init(String^ path, String^ file, String^ ext)
 {
 	String^ f;
 	mOutputPath = path;
 	mOutputFileName = file;
 	mFileExt = ext;
-	mExcel = excel;
 
 	f = path + "\\" + file + "." + ext;
-	f = file + "." + ext;
+//	f = file + "." + ext;
 	// ファイルオープン
 	mSw = gcnew StreamWriter(f);
 
-	if (excel) {
-		mExcelApl = gcnew Microsoft::Office::Interop::Excel::ApplicationClass();
-		mExcelApl->Visible = false;		// エクセルが開かないように設定
-		mWb = mExcelApl->Workbooks->Open(file + ".xls", 
-			System::Reflection::Missing::Value, System::Reflection::Missing::Value, 
-			System::Reflection::Missing::Value, System::Reflection::Missing::Value, 
-			System::Reflection::Missing::Value, System::Reflection::Missing::Value, 
-			System::Reflection::Missing::Value, System::Reflection::Missing::Value, 
-			System::Reflection::Missing::Value, System::Reflection::Missing::Value, 
-			System::Reflection::Missing::Value, System::Reflection::Missing::Value, 
-			System::Reflection::Missing::Value, System::Reflection::Missing::Value);
-	}
 }
 
 // ファイル書き込み
@@ -57,10 +44,6 @@ void OutputFile::CloseFile()
 		mSw->Close();
 	}
 
-	if (mWb != nullptr) {
-		mWb->Close(true, "", false);
-		mExcelApl->Quit();
-	}
 }
 
 // ファイル保存形式

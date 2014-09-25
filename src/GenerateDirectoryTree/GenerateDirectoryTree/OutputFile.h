@@ -3,8 +3,6 @@
 using namespace System;
 using namespace System::IO;
 
-using namespace Microsoft::Office::Interop::Excel;
-
 
 ref class OutputFile
 {
@@ -14,7 +12,7 @@ public:
 
 
 	// 初期設定
-	void Init(String^ path, String^ file, String^ ext, bool excel);
+	void Init(String^ path, String^ file, String^ ext);
 	// ファイル出力
 	bool OutFile(String^ s);
 	// ファイルクローズ
@@ -42,9 +40,5 @@ private:
 	// ファイルストリーマー
 	StreamWriter^ mSw;
 
-	// エクセル出力
-	bool mExcel;
-	Microsoft::Office::Interop::Excel::Application^ mExcelApl;
-	Workbook^ mWb;
 };
 
