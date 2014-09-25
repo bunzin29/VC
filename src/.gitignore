@@ -1,0 +1,13 @@
+#‹¤’Ê
+*.opensdf
+*.sdf
+*.suo
+*.user
+
+#GenerateDirectoryTree
+GenerateDirectoryTree/Debug
+GenerateDirectoryTree/Release
+GenerateDirectoryTree/ipch
+GenerateDirectoryTree/GenerateDirectoryTree/Debug
+GenerateDirectoryTree/GenerateDirectoryTree/Release
+
