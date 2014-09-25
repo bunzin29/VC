@@ -19,6 +19,7 @@ public:
 	void CloseFile();
 
 	// アクセサ
+	String^ getFilePath(void);
 	// ファイル保存形式
 	void setFileExt(String^ fileExt);
 	String^ getFileExt();
@@ -30,6 +31,8 @@ public:
 	String^ getFilename();
 
 private:
+	// ファイルパス(全部)
+	String^ mFilePath;
 	// ファイル保存形式
 	String^ mFileExt;
 	// 保存先

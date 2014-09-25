@@ -9,15 +9,14 @@ OutputFile::OutputFile(void)
 // 初期化
 void OutputFile::Init(String^ path, String^ file, String^ ext)
 {
-	String^ f;
 	mOutputPath = path;
 	mOutputFileName = file;
 	mFileExt = ext;
 
-	f = path + "\\" + file + "." + ext;
+	mFilePath = path + "\\" + file + "." + ext;
 //	f = file + "." + ext;
 	// ファイルオープン
-	mSw = gcnew StreamWriter(f);
+	mSw = gcnew StreamWriter(mFilePath);
 
 }
 
@@ -44,6 +43,11 @@ void OutputFile::CloseFile()
 		mSw->Close();
 	}
 
+}
+
+String^ OutputFile::getFilePath(void)
+{
+	return mFilePath;
 }
 
 // ファイル保存形式

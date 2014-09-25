@@ -88,6 +88,16 @@ void GenerateDirectory::Init()
 // 後処理
 void GenerateDirectory::After()
 {
+#if 1
+	String^ filePath;
+
+	filePath = mOfile->getFilePath();
+
+	if (filePath != nullptr && filePath != "") {
+		System::Diagnostics::Process::Start(filePath);
+	}
+#endif
+
 	// CloseFileでヌルチェックを行っている
 	mOfile->CloseFile();
 }
