@@ -145,38 +145,67 @@ namespace GenerateDirectoryTree {
 		}
 #pragma endregion
 
+	public :
+		delegate void delSetControl(bool en);
+		delSetControl^ mDelSetCtrl;
+	
+	private:
+		void SetControl(bool en)
+		{
+			if (en) {
+				setEnableCtrl();
+			} else {
+				setDisableCtrl();
+			}
+		}
+
+
+	private:
+		// コントロール有効
+		void setEnableCtrl(void)
+		{
+			this->btn_exe->Enabled   = true;
+			this->btn_clear->Enabled = true;
+		}
+
+	private:
+		// コントロール無効
+		void setDisableCtrl(void)
+		{
+			this->btn_exe->Enabled   = false;
+			this->btn_clear->Enabled = false;
+
+		}
 
 	private:
 		// ドラッグ&ドロップ動作
 		System::Void lb_in_dir_DragDrop(System::Object^  /*sender*/, System::Windows::Forms::DragEventArgs^  e)
 		{
-				 array<String^>^ s = (array<String^>^)e->Data->GetData(DataFormats::FileDrop, false);
-				 for (int i = 0; i < s->Length; i++) {
+			array<String^>^ s = (array<String^>^)e->Data->GetData(DataFormats::FileDrop, false);
+			for (int i = 0; i < s->Length; i++) {
 #ifdef _DEBUG
-					 Debug::WriteLine(s[i]);
+					Debug::WriteLine(s[i]);
 #endif
-					 inputDirList = s[i];
+					inputDirList = s[i];
 
-					 DirectoryInfo^ di = gcnew DirectoryInfo(s[i]);
+					DirectoryInfo^ di = gcnew DirectoryInfo(s[i]);
 
-					 if (di->Exists) {
-						 // ディレクトリのみ追加
-						 this->lb_in_dir->Items->Add(s[i]);
-					 }
-				 }
+					if (di->Exists) {
+						// ディレクトリのみ追加
+						this->lb_in_dir->Items->Add(s[i]);
+					}
+			}
 		}
 
 	private:
 		// ドラッグエンター
 		System::Void lb_in_dir_DragEnter(System::Object^  /*sender*/, System::Windows::Forms::DragEventArgs^  e)
 		{
-
-				if(e->Data->GetDataPresent(DataFormats::FileDrop)) {
-					e->Effect = DragDropEffects::All;
-				} else {
-					e->Effect = DragDropEffects::None;
-				}
-
+			if(e->Data->GetDataPresent(DataFormats::FileDrop)) {
+				e->Effect = DragDropEffects::All;
+			} else {
+				e->Effect = DragDropEffects::None;
+			}
 		}
 
 	private:
@@ -189,61 +218,63 @@ namespace GenerateDirectoryTree {
 		// 実行ボタン
 		System::Void btn_exe_Click(System::Object^  /*sender*/, System::EventArgs^  /*e*/)
 		{
-				 // スレッド起動
-				 bgw_exe->RunWorkerAsync();
+#if 1
+			mDelSetCtrl = gcnew delSetControl(this, &GenerateDirectoryTree::Form1::SetControl);
+			mDelSetCtrl->Invoke(false);
+#endif
+			// スレッド起動
+			bgw_exe->RunWorkerAsync();
 		}
 
 	private:
 		// クリア
 		System::Void btn_clear_Click(System::Object^  /*sender*/, System::EventArgs^  /*e*/)
 		{
-				 int i;
+			int i;
 				 
-				 // 選択された項目のみ削除
-				 for (i = 0; i < lb_in_dir->SelectedIndices->Count; i++) {
-					 lb_in_dir->Items->RemoveAt(lb_in_dir->SelectedIndices[i]);
-				 }
+			// 選択された項目のみ削除
+			for (i = 0; i < lb_in_dir->SelectedIndices->Count; i++) {
+				lb_in_dir->Items->RemoveAt(lb_in_dir->SelectedIndices[i]);
+			}
 
-				 // 全削除
-				 if (i == 0) {
-					 while (lb_in_dir->Items->Count > 0) {
-						 lb_in_dir->Items->RemoveAt(0);
-					 }
-				 }
+			// 全削除
+			if (i == 0) {
+				while (lb_in_dir->Items->Count > 0) {
+					lb_in_dir->Items->RemoveAt(0);
+				}
+			}
 		}
 
 	private:
 		// スレッド実行処理
 		System::Void backgroundWorker_DoWork(System::Object^  /*sender*/, System::ComponentModel::DoWorkEventArgs^  /*e*/)
 		{
-				 int i;
-				 int procCnt = 0;
-				 int cnt;
+			int i;
+			int procCnt = 0;
+			int cnt;
 
-				 cnt = this->lb_in_dir->Items->Count;
-				 for (i = 0; i < cnt; i++) {
+			cnt = this->lb_in_dir->Items->Count;
+			for (i = 0; i < cnt; i++) {
 #ifdef _DEBUG
-					 Debug::WriteLine(this->lb_in_dir->Items[i]->ToString());
+				Debug::WriteLine(this->lb_in_dir->Items[i]->ToString());
 #endif
 
 #ifndef _DEBUG
-					 if (i != 0) {
-						 System::Windows::Forms::DialogResult result =
-								MessageBox::Show("続けて処理しますか？", "", MessageBoxButtons::YesNo);
-						 if (result != System::Windows::Forms::DialogResult::Yes) {
-							 break;
-						 }
-					 }
+				if (i != 0) {
+					System::Windows::Forms::DialogResult result =
+							MessageBox::Show("続けて処理しますか？", "", MessageBoxButtons::YesNo);
+					if (result != System::Windows::Forms::DialogResult::Yes) {
+						break;
+					}
+				}
 #endif
-
-					 mMain->Start(this->lb_in_dir->Items[i]->ToString(), this->cb_tab->Checked);
-					 procCnt++;
-				 }
-				 if (procCnt > 0) {
-					 MessageBox::Show("正常終了");
-				 } else {
-
-				 }
+				mMain->Start(this->lb_in_dir->Items[i]->ToString(), this->cb_tab->Checked);
+				procCnt++;
+			}
+			
+			if (procCnt > 0) {
+				MessageBox::Show("正常終了");
+			}
 		}
 
 	private:
@@ -256,6 +287,8 @@ namespace GenerateDirectoryTree {
 		// スレッド終了
 		System::Void backgroundWorker1_RunWorkerCompleted(System::Object^  /*sender*/, System::ComponentModel::RunWorkerCompletedEventArgs^  /*e*/)
 		{
+			mDelSetCtrl = gcnew delSetControl(this, &GenerateDirectoryTree::Form1::SetControl);
+			mDelSetCtrl->Invoke(true);
 		}
 };
 }
