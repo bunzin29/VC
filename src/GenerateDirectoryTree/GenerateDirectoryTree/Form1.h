@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Config.h"
 #include "Main.h"
 
 namespace GenerateDirectoryTree {
@@ -19,6 +20,7 @@ namespace GenerateDirectoryTree {
 	{
 	private:
 		Main^ mMain;
+		Config^ mConfig;
 		String^ inputDirList;//フルパスを格納する配列
 
 		// フォームコントロール
@@ -26,7 +28,11 @@ namespace GenerateDirectoryTree {
 		System::Windows::Forms::Button^            btn_clear;			// クリアボタン
 		System::Windows::Forms::CheckBox^          cb_tab;				// タブチェックボックス
 		System::ComponentModel::BackgroundWorker^  bgw_exe;				// 実行スレッド
-		System::Windows::Forms::ListBox^           lb_in_dir;			// ディレクトリリストボックス
+	private: System::Windows::Forms::MenuStrip^  menuStrip1;
+	private: System::Windows::Forms::ToolStripMenuItem^  ヘルプToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  バージョンToolStripMenuItem;
+
+			 System::Windows::Forms::ListBox^           lb_in_dir;			// ディレクトリリストボックス
 
 	public:
 		Form1(void)
@@ -37,6 +43,7 @@ namespace GenerateDirectoryTree {
 			//
 
 			mMain = gcnew Main();
+			mConfig = gcnew Config();
 
 #ifdef _DEBUG
 			lb_in_dir->Items->Add("E:\\GitHub\\VC\\src\\GenerateDirectoryTree\\bin\\05_議事録(CV#3)");
@@ -75,6 +82,10 @@ namespace GenerateDirectoryTree {
 			this->btn_clear = (gcnew System::Windows::Forms::Button());
 			this->cb_tab = (gcnew System::Windows::Forms::CheckBox());
 			this->bgw_exe = (gcnew System::ComponentModel::BackgroundWorker());
+			this->menuStrip1 = (gcnew System::Windows::Forms::MenuStrip());
+			this->ヘルプToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->バージョンToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->menuStrip1->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// lb_in_dir
@@ -83,10 +94,10 @@ namespace GenerateDirectoryTree {
 			this->lb_in_dir->FormattingEnabled = true;
 			this->lb_in_dir->HorizontalScrollbar = true;
 			this->lb_in_dir->ItemHeight = 12;
-			this->lb_in_dir->Location = System::Drawing::Point(12, 23);
+			this->lb_in_dir->Location = System::Drawing::Point(12, 34);
 			this->lb_in_dir->Name = L"lb_in_dir";
 			this->lb_in_dir->SelectionMode = System::Windows::Forms::SelectionMode::MultiSimple;
-			this->lb_in_dir->Size = System::Drawing::Size(385, 64);
+			this->lb_in_dir->Size = System::Drawing::Size(385, 76);
 			this->lb_in_dir->TabIndex = 0;
 			this->lb_in_dir->SelectedIndexChanged += gcnew System::EventHandler(this, &Form1::lb_in_dir_SelectedIndexChanged);
 			this->lb_in_dir->DragDrop += gcnew System::Windows::Forms::DragEventHandler(this, &Form1::lb_in_dir_DragDrop);
@@ -94,7 +105,7 @@ namespace GenerateDirectoryTree {
 			// 
 			// btn_exe
 			// 
-			this->btn_exe->Location = System::Drawing::Point(12, 101);
+			this->btn_exe->Location = System::Drawing::Point(12, 121);
 			this->btn_exe->Name = L"btn_exe";
 			this->btn_exe->Size = System::Drawing::Size(75, 23);
 			this->btn_exe->TabIndex = 1;
@@ -104,7 +115,7 @@ namespace GenerateDirectoryTree {
 			// 
 			// btn_clear
 			// 
-			this->btn_clear->Location = System::Drawing::Point(107, 101);
+			this->btn_clear->Location = System::Drawing::Point(102, 121);
 			this->btn_clear->Name = L"btn_clear";
 			this->btn_clear->Size = System::Drawing::Size(75, 23);
 			this->btn_clear->TabIndex = 2;
@@ -115,7 +126,7 @@ namespace GenerateDirectoryTree {
 			// cb_tab
 			// 
 			this->cb_tab->AutoSize = true;
-			this->cb_tab->Location = System::Drawing::Point(216, 107);
+			this->cb_tab->Location = System::Drawing::Point(204, 125);
 			this->cb_tab->Name = L"cb_tab";
 			this->cb_tab->Size = System::Drawing::Size(43, 16);
 			this->cb_tab->TabIndex = 3;
@@ -128,6 +139,29 @@ namespace GenerateDirectoryTree {
 			this->bgw_exe->ProgressChanged += gcnew System::ComponentModel::ProgressChangedEventHandler(this, &Form1::backgroundWorker1_ProgressChanged);
 			this->bgw_exe->RunWorkerCompleted += gcnew System::ComponentModel::RunWorkerCompletedEventHandler(this, &Form1::backgroundWorker1_RunWorkerCompleted);
 			// 
+			// menuStrip1
+			// 
+			this->menuStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) {this->ヘルプToolStripMenuItem});
+			this->menuStrip1->Location = System::Drawing::Point(0, 0);
+			this->menuStrip1->Name = L"menuStrip1";
+			this->menuStrip1->Size = System::Drawing::Size(417, 26);
+			this->menuStrip1->TabIndex = 4;
+			this->menuStrip1->Text = L"menuStrip1";
+			// 
+			// ヘルプToolStripMenuItem
+			// 
+			this->ヘルプToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) {this->バージョンToolStripMenuItem});
+			this->ヘルプToolStripMenuItem->Name = L"ヘルプToolStripMenuItem";
+			this->ヘルプToolStripMenuItem->Size = System::Drawing::Size(75, 22);
+			this->ヘルプToolStripMenuItem->Text = L"ヘルプ(&H)";
+			// 
+			// バージョンToolStripMenuItem
+			// 
+			this->バージョンToolStripMenuItem->Name = L"バージョンToolStripMenuItem";
+			this->バージョンToolStripMenuItem->Size = System::Drawing::Size(154, 22);
+			this->バージョンToolStripMenuItem->Text = L"バージョン(&V)";
+			this->バージョンToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::バージョンToolStripMenuItem_Click);
+			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
@@ -137,8 +171,12 @@ namespace GenerateDirectoryTree {
 			this->Controls->Add(this->btn_clear);
 			this->Controls->Add(this->btn_exe);
 			this->Controls->Add(this->lb_in_dir);
+			this->Controls->Add(this->menuStrip1);
+			this->MainMenuStrip = this->menuStrip1;
 			this->Name = L"Form1";
 			this->Text = L"Form1";
+			this->menuStrip1->ResumeLayout(false);
+			this->menuStrip1->PerformLayout();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -289,6 +327,16 @@ namespace GenerateDirectoryTree {
 		{
 			mDelSetCtrl = gcnew delSetControl(this, &GenerateDirectoryTree::Form1::SetControl);
 			mDelSetCtrl->Invoke(true);
+		}
+
+	private:
+		// バージョン
+		System::Void バージョンToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
+		{
+			String^ ver;
+
+			ver = mConfig->version;
+			MessageBox::Show("ソフトウェアバージョン： " + ver, "バージョン情報");
 		}
 };
 }
