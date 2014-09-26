@@ -148,7 +148,7 @@ namespace GenerateDirectoryTree {
 
 	private:
 		// ドラッグ&ドロップ動作
-		System::Void lb_in_dir_DragDrop(System::Object^  sender, System::Windows::Forms::DragEventArgs^  e)
+		System::Void lb_in_dir_DragDrop(System::Object^  /*sender*/, System::Windows::Forms::DragEventArgs^  e)
 		{
 				 array<String^>^ s = (array<String^>^)e->Data->GetData(DataFormats::FileDrop, false);
 				 for (int i = 0; i < s->Length; i++) {
@@ -168,7 +168,7 @@ namespace GenerateDirectoryTree {
 
 	private:
 		// ドラッグエンター
-		System::Void lb_in_dir_DragEnter(System::Object^  sender, System::Windows::Forms::DragEventArgs^  e)
+		System::Void lb_in_dir_DragEnter(System::Object^  /*sender*/, System::Windows::Forms::DragEventArgs^  e)
 		{
 
 				if(e->Data->GetDataPresent(DataFormats::FileDrop)) {
@@ -181,13 +181,13 @@ namespace GenerateDirectoryTree {
 
 	private:
 		// アイテム変更
-		System::Void lb_in_dir_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e)
+		System::Void lb_in_dir_SelectedIndexChanged(System::Object^  /*sender*/, System::EventArgs^  /*e*/)
 		{
 		}
 
 	private:
 		// 実行ボタン
-		System::Void btn_exe_Click(System::Object^  sender, System::EventArgs^  e)
+		System::Void btn_exe_Click(System::Object^  /*sender*/, System::EventArgs^  /*e*/)
 		{
 				 // スレッド起動
 				 bgw_exe->RunWorkerAsync();
@@ -195,7 +195,7 @@ namespace GenerateDirectoryTree {
 
 	private:
 		// クリア
-		System::Void btn_clear_Click(System::Object^  sender, System::EventArgs^  e)
+		System::Void btn_clear_Click(System::Object^  /*sender*/, System::EventArgs^  /*e*/)
 		{
 				 int i;
 				 
@@ -214,7 +214,7 @@ namespace GenerateDirectoryTree {
 
 	private:
 		// スレッド実行処理
-		System::Void backgroundWorker_DoWork(System::Object^  sender, System::ComponentModel::DoWorkEventArgs^  e)
+		System::Void backgroundWorker_DoWork(System::Object^  /*sender*/, System::ComponentModel::DoWorkEventArgs^  /*e*/)
 		{
 				 int i;
 				 int procCnt = 0;
@@ -248,13 +248,13 @@ namespace GenerateDirectoryTree {
 
 	private:
 		// 変更
-		System::Void backgroundWorker1_ProgressChanged(System::Object^  sender, System::ComponentModel::ProgressChangedEventArgs^  e)
+		System::Void backgroundWorker1_ProgressChanged(System::Object^  /*sender*/, System::ComponentModel::ProgressChangedEventArgs^  /*e*/)
 		{
 		}
 
 	private:
 		// スレッド終了
-		System::Void backgroundWorker1_RunWorkerCompleted(System::Object^  sender, System::ComponentModel::RunWorkerCompletedEventArgs^  e)
+		System::Void backgroundWorker1_RunWorkerCompleted(System::Object^  /*sender*/, System::ComponentModel::RunWorkerCompletedEventArgs^  /*e*/)
 		{
 		}
 };

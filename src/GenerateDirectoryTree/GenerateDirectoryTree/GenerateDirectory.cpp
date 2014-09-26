@@ -18,7 +18,7 @@ void GenerateDirectory::Init(String^ dir, int outfmt)
 }
 
 // é¿çs
-bool GenerateDirectory::Exec(String^ dirPath, String^ filePath)
+bool GenerateDirectory::Exec(String^ /*dirPath*/, String^ /*filePath*/)
 {
 	bool ret = true;
 	

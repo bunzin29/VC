@@ -6,7 +6,7 @@ MyDebug::MyDebug(void)
 {
 }
 
-void MyDebug::Output(String^ s)
+void MyDebug::Output(String^ /*s*/)
 {
 
 }

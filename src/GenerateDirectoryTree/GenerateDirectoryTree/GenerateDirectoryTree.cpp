@@ -6,7 +6,7 @@
 using namespace GenerateDirectoryTree;
 
 [STAThreadAttribute]
-int main(array<System::String ^> ^args)
+int main(array<System::String ^> ^/*args*/)
 {
 	// コントロールが作成される前に、Windows XP ビジュアル効果を有効にします
 	System::Windows::Forms::Application::EnableVisualStyles();
