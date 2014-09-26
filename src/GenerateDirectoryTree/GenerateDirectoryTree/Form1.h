@@ -19,14 +19,14 @@ namespace GenerateDirectoryTree {
 	{
 	private:
 		Main^ mMain;
-
-		System::Windows::Forms::Button^  btn_exe;
-		System::Windows::Forms::Button^  btn_clear;
 		String^ inputDirList;//フルパスを格納する配列
-	private: System::Windows::Forms::CheckBox^  cb_Tab;
 
-
-			 System::Windows::Forms::ListBox^  lb_in_dir;
+		// フォームコントロール
+		System::Windows::Forms::Button^            btn_exe;				// 実行ボタン
+		System::Windows::Forms::Button^            btn_clear;			// クリアボタン
+		System::Windows::Forms::CheckBox^          cb_tab;				// タブチェックボックス
+		System::ComponentModel::BackgroundWorker^  bgw_exe;				// 実行スレッド
+		System::Windows::Forms::ListBox^           lb_in_dir;			// ディレクトリリストボックス
 
 	public:
 		Form1(void)
@@ -73,7 +73,8 @@ namespace GenerateDirectoryTree {
 			this->lb_in_dir = (gcnew System::Windows::Forms::ListBox());
 			this->btn_exe = (gcnew System::Windows::Forms::Button());
 			this->btn_clear = (gcnew System::Windows::Forms::Button());
-			this->cb_Tab = (gcnew System::Windows::Forms::CheckBox());
+			this->cb_tab = (gcnew System::Windows::Forms::CheckBox());
+			this->bgw_exe = (gcnew System::ComponentModel::BackgroundWorker());
 			this->SuspendLayout();
 			// 
 			// lb_in_dir
@@ -111,22 +112,28 @@ namespace GenerateDirectoryTree {
 			this->btn_clear->UseVisualStyleBackColor = true;
 			this->btn_clear->Click += gcnew System::EventHandler(this, &Form1::btn_clear_Click);
 			// 
-			// cb_Tab
+			// cb_tab
 			// 
-			this->cb_Tab->AutoSize = true;
-			this->cb_Tab->Location = System::Drawing::Point(216, 107);
-			this->cb_Tab->Name = L"cb_Tab";
-			this->cb_Tab->Size = System::Drawing::Size(43, 16);
-			this->cb_Tab->TabIndex = 3;
-			this->cb_Tab->Text = L"Tab";
-			this->cb_Tab->UseVisualStyleBackColor = true;
+			this->cb_tab->AutoSize = true;
+			this->cb_tab->Location = System::Drawing::Point(216, 107);
+			this->cb_tab->Name = L"cb_tab";
+			this->cb_tab->Size = System::Drawing::Size(43, 16);
+			this->cb_tab->TabIndex = 3;
+			this->cb_tab->Text = L"Tab";
+			this->cb_tab->UseVisualStyleBackColor = true;
+			// 
+			// bgw_exe
+			// 
+			this->bgw_exe->DoWork += gcnew System::ComponentModel::DoWorkEventHandler(this, &Form1::backgroundWorker_DoWork);
+			this->bgw_exe->ProgressChanged += gcnew System::ComponentModel::ProgressChangedEventHandler(this, &Form1::backgroundWorker1_ProgressChanged);
+			this->bgw_exe->RunWorkerCompleted += gcnew System::ComponentModel::RunWorkerCompletedEventHandler(this, &Form1::backgroundWorker1_RunWorkerCompleted);
 			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(417, 151);
-			this->Controls->Add(this->cb_Tab);
+			this->Controls->Add(this->cb_tab);
 			this->Controls->Add(this->btn_clear);
 			this->Controls->Add(this->btn_exe);
 			this->Controls->Add(this->lb_in_dir);
@@ -137,7 +144,12 @@ namespace GenerateDirectoryTree {
 
 		}
 #pragma endregion
-	private: System::Void lb_in_dir_DragDrop(System::Object^  sender, System::Windows::Forms::DragEventArgs^  e) {
+
+
+	private:
+		// ドラッグ&ドロップ動作
+		System::Void lb_in_dir_DragDrop(System::Object^  sender, System::Windows::Forms::DragEventArgs^  e)
+		{
 				 array<String^>^ s = (array<String^>^)e->Data->GetData(DataFormats::FileDrop, false);
 				 for (int i = 0; i < s->Length; i++) {
 #ifdef _DEBUG
@@ -152,8 +164,12 @@ namespace GenerateDirectoryTree {
 						 this->lb_in_dir->Items->Add(s[i]);
 					 }
 				 }
-			 }
-	private: System::Void lb_in_dir_DragEnter(System::Object^  sender, System::Windows::Forms::DragEventArgs^  e) {
+		}
+
+	private:
+		// ドラッグエンター
+		System::Void lb_in_dir_DragEnter(System::Object^  sender, System::Windows::Forms::DragEventArgs^  e)
+		{
 
 				if(e->Data->GetDataPresent(DataFormats::FileDrop)) {
 					e->Effect = DragDropEffects::All;
@@ -161,12 +177,45 @@ namespace GenerateDirectoryTree {
 					e->Effect = DragDropEffects::None;
 				}
 
-			 }
-	private: System::Void lb_in_dir_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
-			 }
+		}
 
-	// 実行ボタン
-	private: System::Void btn_exe_Click(System::Object^  sender, System::EventArgs^  e) {
+	private:
+		// アイテム変更
+		System::Void lb_in_dir_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e)
+		{
+		}
+
+	private:
+		// 実行ボタン
+		System::Void btn_exe_Click(System::Object^  sender, System::EventArgs^  e)
+		{
+				 // スレッド起動
+				 bgw_exe->RunWorkerAsync();
+		}
+
+	private:
+		// クリア
+		System::Void btn_clear_Click(System::Object^  sender, System::EventArgs^  e)
+		{
+				 int i;
+				 
+				 // 選択された項目のみ削除
+				 for (i = 0; i < lb_in_dir->SelectedIndices->Count; i++) {
+					 lb_in_dir->Items->RemoveAt(lb_in_dir->SelectedIndices[i]);
+				 }
+
+				 // 全削除
+				 if (i == 0) {
+					 while (lb_in_dir->Items->Count > 0) {
+						 lb_in_dir->Items->RemoveAt(0);
+					 }
+				 }
+		}
+
+	private:
+		// スレッド実行処理
+		System::Void backgroundWorker_DoWork(System::Object^  sender, System::ComponentModel::DoWorkEventArgs^  e)
+		{
 				 int i;
 				 int procCnt = 0;
 				 int cnt;
@@ -187,7 +236,7 @@ namespace GenerateDirectoryTree {
 					 }
 #endif
 
-					 mMain->Start(this->lb_in_dir->Items[i]->ToString(), this->cb_Tab->Checked);
+					 mMain->Start(this->lb_in_dir->Items[i]->ToString(), this->cb_tab->Checked);
 					 procCnt++;
 				 }
 				 if (procCnt > 0) {
@@ -195,25 +244,19 @@ namespace GenerateDirectoryTree {
 				 } else {
 
 				 }
-			 }
+		}
 
-	// クリア
-	private: System::Void btn_clear_Click(System::Object^  sender, System::EventArgs^  e) {
-				 int i;
-				 
-				 // 選択された項目のみ削除
-				 for (i = 0; i < lb_in_dir->SelectedIndices->Count; i++) {
-					 lb_in_dir->Items->RemoveAt(lb_in_dir->SelectedIndices[i]);
-				 }
+	private:
+		// 変更
+		System::Void backgroundWorker1_ProgressChanged(System::Object^  sender, System::ComponentModel::ProgressChangedEventArgs^  e)
+		{
+		}
 
-				 // 全削除
-				 if (i == 0) {
-					 while (lb_in_dir->Items->Count > 0) {
-						 lb_in_dir->Items->RemoveAt(0);
-					 }
-				 }
-
-		 }
+	private:
+		// スレッド終了
+		System::Void backgroundWorker1_RunWorkerCompleted(System::Object^  sender, System::ComponentModel::RunWorkerCompletedEventArgs^  e)
+		{
+		}
 };
 }
 
