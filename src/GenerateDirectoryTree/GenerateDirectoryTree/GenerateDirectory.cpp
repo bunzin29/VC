@@ -88,7 +88,7 @@ void GenerateDirectory::Init()
 // Œãˆ—
 void GenerateDirectory::After()
 {
-#if 1
+#ifndef _DEBUG
 	String^ filePath;
 
 	filePath = mOfile->getFilePath();

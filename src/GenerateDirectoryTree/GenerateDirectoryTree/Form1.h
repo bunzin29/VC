@@ -176,6 +176,8 @@ namespace GenerateDirectoryTree {
 #ifdef _DEBUG
 					 Debug::WriteLine(this->lb_in_dir->Items[i]->ToString());
 #endif
+
+#ifndef _DEBUG
 					 if (i != 0) {
 						 System::Windows::Forms::DialogResult result =
 								MessageBox::Show("‘±‚¯‚Äˆ—‚µ‚Ü‚·‚©H", "", MessageBoxButtons::YesNo);
@@ -183,6 +185,7 @@ namespace GenerateDirectoryTree {
 							 break;
 						 }
 					 }
+#endif
 
 					 mMain->Start(this->lb_in_dir->Items[i]->ToString(), this->cb_Tab->Checked);
 					 procCnt++;
