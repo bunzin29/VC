@@ -1,19 +1,21 @@
 #pragma once
 
 using namespace System;
-using namespace System::IO;
 
+// ソフトウェアバージョン
 #define SOFTWARE_VERSION	"0.0.1"
 
+// 設定クラス
 public ref  class Config {
-	public:
-		String^ version;
+// パブリック変数
+public:
+	String^ version;	// バージョン情報
 
-	public:
-		Config()
-		{
-			version = SOFTWARE_VERSION;
-		}
-
+// パブリック関数
+public:
+	// コンストラクタ
+	Config()
+	{
+		version = SOFTWARE_VERSION;
+	}
 };
-

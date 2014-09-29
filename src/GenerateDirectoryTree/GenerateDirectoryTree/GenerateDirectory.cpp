@@ -1,28 +1,31 @@
 #include "stdafx.h"
 #include "GenerateDirectory.h"
 
+
+// ----------- パブリック関数 ----------- //
 // コンストラクタ
 GenerateDirectory::GenerateDirectory(void)
 {
 }
 
-// ----------- public ----------- //
-
-// 初期設定
+// 初期設定を行う
 void GenerateDirectory::Init(String^ dir, int outfmt, BackgroundWorker^ worker, DoWorkEventArgs^ doWkEvt, long cnt)
 {
+	// 実行スレッド設定
 	mWorker  = worker;
 	mDoWkEvt = doWkEvt;
+	// プログレスバー用変数初期化
 	mAllCnt  = cnt;
 	mExeCnt  = 0;
 
 	// カレントディレクトリ設定
 	mCurrentDir = dir;
+
 	// 出力フォーマットを指定して出力クラス生成
 	mOtree = gcnew OutputTree(outfmt);
 }
 
-// 実行
+// 実行する
 bool GenerateDirectory::Exec(String^ /*dirPath*/, String^ /*filePath*/)
 {
 	bool ret = true;
@@ -36,7 +39,7 @@ bool GenerateDirectory::Exec(String^ /*dirPath*/, String^ /*filePath*/)
 		Init();
 
 		// ルートディレクトリを設定
-		rootDirectory(mCurrentDir);
+		RootDirectory(mCurrentDir);
 
 		// サブディレクトリ検索
 		array<String^>^ d = Directory::GetDirectories(mCurrentDir);
@@ -44,11 +47,11 @@ bool GenerateDirectory::Exec(String^ /*dirPath*/, String^ /*filePath*/)
 
 		if (d->Length > 0) {
 			// サブディレクトリ検索
-			serchSubDirectory(mCurrentDir, isFiles(mCurrentDir));
+			SerchSubDirectory(mCurrentDir, IsFiles(mCurrentDir));
 		}
 		
 		// カレントディレクトリ検索
-		serchCurrentFiles(mCurrentDir);
+		SerchCurrentFiles(mCurrentDir);
 
 		// 後処理
 		After();
@@ -57,10 +60,10 @@ bool GenerateDirectory::Exec(String^ /*dirPath*/, String^ /*filePath*/)
 	return ret;
 }
 
-// ----------- private ----------- //
 
-// 初期化
-void GenerateDirectory::Init()
+// ----------- プライベート関数 ----------- //
+// 初期化を行う
+void GenerateDirectory::Init(void)
 {
 	String^ path = nullptr;
 	String^ file = nullptr;
@@ -68,19 +71,25 @@ void GenerateDirectory::Init()
 	String^ fileName = nullptr;
 
 	mIndent = 0;								// インデント
-	MCurrentFileNum = getFiles(mCurrentDir);	// カレントのファイル数
+	mCurrentFileNum = GetFiles(mCurrentDir);	// カレントのファイル数
 	mShcFile = true;
 
 	// ファイル出力設定
 	// パネルまたはデフォルト保存先指定
 	if (mDirPath != nullptr && mFileName != nullptr) {
+		// T.B.D
 
 	} else {
+		//アプリケーションを開始した実行可能ファイルの、ファイル名を含まないパスを取得
 		path = System::Windows::Forms::Application::StartupPath;
 
+		// カレントディレクトリ設定
 		fileName = mCurrentDir;
 
+		// ディレクトリ名をファイル名に設定
 		file = fileName->Remove(0, fileName->LastIndexOf("\\") + 1);
+
+		// 出力ファイルの拡張子を設定
 		ext = "txt";
 	}
 
@@ -90,10 +99,10 @@ void GenerateDirectory::Init()
 	mOfile->Init(path, file, ext);
 }
 
-// 後処理
-void GenerateDirectory::After()
+// 後処理を行う
+void GenerateDirectory::After(void)
 {
-#ifndef _DEBUG
+#ifndef _DEBUG		// 生成したファイルを開く
 	String^ filePath;
 
 	filePath = mOfile->getFilePath();
@@ -107,8 +116,33 @@ void GenerateDirectory::After()
 	mOfile->CloseFile();
 }
 
-// ファイル数取得
-int GenerateDirectory::getFiles(String^ dir)
+// ルートディレクトリ名を出力する
+void GenerateDirectory::RootDirectory(String^ dir)
+{
+	String^ dirName;		// ディレクトリ名
+
+	// ディレクトリ名取得
+	dirName = dir->Remove(0, dir->LastIndexOf("\\") + 1);
+	// 文字列出力
+	SetOutput(mIndent, dirName, OT_MARK_NONE);
+}
+
+// カレントディレクトリを検索する
+void GenerateDirectory::SerchCurrentFiles(String^ dir)
+{
+	// ファイル検索が有効の場合
+	if (mShcFile) {
+		// (複数)ファイルを指定してファイル検索
+		array<String^>^ files = Directory::GetFiles(dir);
+		Array::Sort(files);
+
+		// ファイル検索
+		SerchFiles(files);
+	}
+}
+
+// ファイル数を取得する
+int GenerateDirectory::GetFiles(String^ dir)
 {
 	array<String^>^ files;
 
@@ -118,35 +152,14 @@ int GenerateDirectory::getFiles(String^ dir)
 	return files->Length;
 }
 
-// ルートディレクトリ
-void GenerateDirectory::rootDirectory(String^ dir)
-{
-	String^ dirName;
-
-	dirName = dir->Remove(0, dir->LastIndexOf("\\") + 1);
-	// 文字列出力
-	setOutput(mIndent, dirName, OT_MARK_NONE);
-}
-
-// カレントディレクトリ検索
-void GenerateDirectory::serchCurrentFiles(String^ dir)
-{
-	// ファイル検索が有効の場合
-	if (mShcFile) {
-		// (複数)ファイルを指定してファイル検索
-		array<String^>^ files = Directory::GetFiles(dir);
-		Array::Sort(files);
-		serchFiles(files);
-	}
-}
-
-// サブディレクトリ検索
-void GenerateDirectory::serchSubDirectory(String^ dir, bool exFile)
+// サブディレクトリを検索する
+void GenerateDirectory::SerchSubDirectory(String^ dir, bool exFile)
 {
 	array<String^>^ dirs;		// ディレクトリ一覧
-	String^ dirName;
+	String^         dirName;	// ディレクトリ名	
 
-	if (endExeThread()) {
+	// 実行スレッド動作確認
+	if (EndExeThread()) {
 		return;
 	}
 
@@ -163,46 +176,45 @@ void GenerateDirectory::serchSubDirectory(String^ dir, bool exFile)
 
 		if (i == (dirs->Length - 1)) {	// 最後のディレクトリ
 			if (exFile) {				// ファイルが存在する
-				setOutput(mIndent, dirName, OT_MARK_BR);
+				SetOutput(mIndent, dirName, OT_MARK_BR);
 			} else {					// ファイルが存在しない
-				setOutput(mIndent, dirName, OT_MARK_ED);
+				SetOutput(mIndent, dirName, OT_MARK_ED);
 			}
 		} else {
-			setOutput(mIndent, dirName, OT_MARK_BR);
+			SetOutput(mIndent, dirName, OT_MARK_BR);
 		}
 
 		// サブディレクトリ検索(再帰)
-		bool isFile = isFiles(dirs[i]);
-		serchSubDirectory(dirs[i], isFile);
+		bool isFile = IsFiles(dirs[i]);
+		SerchSubDirectory(dirs[i], isFile);
 
-		if (mShcFile) {
+		if (mShcFile) {		// ファイル検索が有効の場合
 			// 全てのファイル検索
 			array<String^>^ files = Directory::GetFiles(dirs[i]);
 			Array::Sort(files);
-			serchFiles(files);
+			SerchFiles(files);
 		}
 	}
 
 	mIndent--;				// インデントデクリメント
-
-	return;
 }
 
-// ファイル検索
-void GenerateDirectory::serchFiles(array<String^>^ files)
+// ファイル検索する
+void GenerateDirectory::SerchFiles(array<String^>^ files)
 {
-	int i;
-	String^ fileName;
+	int     i;
+	String^ fileName;		// ファイル名
 
 	// ファイルが存在する場合
 	if (files->Length > 0) {
 		mIndent++;			// インデントインクリメント
 		for (i = 0; i < files->Length; i++) {
+			// ファイル名取得
 			fileName = IO::Path::GetFileName(files[i]);
-			if (i == files->Length - 1) {
-				setOutput(mIndent, fileName, OT_MARK_ED);
+			if (i == files->Length - 1) {		// ファイルが最後か判定
+				SetOutput(mIndent, fileName, OT_MARK_ED);
 			} else {
-				setOutput(mIndent, fileName, OT_MARK_BR);
+				SetOutput(mIndent, fileName, OT_MARK_BR);
 			}
 		}
 		mIndent--;			// インデントデクリメント
@@ -210,12 +222,13 @@ void GenerateDirectory::serchFiles(array<String^>^ files)
 }
 
 // ファイルが存在するか
-bool GenerateDirectory::isFiles(String^ dir)
+bool GenerateDirectory::IsFiles(String^ dir)
 {
-	bool ret;
-	int fileNum;
+	bool ret;			// 戻り値
+	int  fileNum;		// ファイル数
 
-	fileNum = getFiles(dir);
+	// ファイル数取得
+	fileNum = GetFiles(dir);
 	if (fileNum > 0) {
 		ret = true;
 	} else {
@@ -225,12 +238,11 @@ bool GenerateDirectory::isFiles(String^ dir)
 	return ret;
 }
 
-
-// 出力文字列設定
-bool GenerateDirectory::setOutput(int indent, String^ out, unsigned char mark)
+// 出力文字列を設定する
+bool GenerateDirectory::SetOutput(int indent, String^ out, unsigned char mark)
 {
-	bool ret = false;
-	String^ data = nullptr;
+	bool    ret  = false;		// 戻り値
+	String^ data = nullptr;		// データ格納用
 
 	if (mOtree != nullptr) {
 		// インデント、出力文字列、マーク、終端種別を指定して出力
@@ -243,20 +255,22 @@ bool GenerateDirectory::setOutput(int indent, String^ out, unsigned char mark)
 			mOfile->OutFile(data);
 
 			// プログレスバー更新
-			updatePrg();
+			UpdatePrg();
 		}
 	}
 
 	return ret;
 }
 
-// プログレスバー更新
-bool GenerateDirectory::updatePrg(void)
+// プログレスバーを更新する
+bool GenerateDirectory::UpdatePrg(void)
 {
-	bool ret = true;
-	double tmp;
+	bool   ret = true;		// 戻り値
+	double tmp;				// データ一時格納用
 
-	mExeCnt++;
+	mExeCnt++;		// カウントアップ
+
+	// プログレスバーの設定値計算(0～100)
 	tmp = (double)mExeCnt / (double)mAllCnt;
 	tmp *= 100.0;
 
@@ -265,11 +279,12 @@ bool GenerateDirectory::updatePrg(void)
 	return ret;
 }
 
-// 実行スレッド判定
-bool GenerateDirectory::endExeThread(void)
+// 実行スレッドを判定する
+bool GenerateDirectory::EndExeThread(void)
 {
-	bool ret = false;
+	bool ret = false;		// 戻り値
 
+	// 実行スレッドのキャンセルを要求したか
 	if (mWorker->CancellationPending) {
 		mDoWkEvt->Cancel = true;
 		ret = true;
@@ -277,5 +292,3 @@ bool GenerateDirectory::endExeThread(void)
 
 	return ret;
 }
-
-

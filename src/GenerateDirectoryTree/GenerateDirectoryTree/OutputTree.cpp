@@ -5,20 +5,24 @@
 #define DEBUG_OUTPUT_TREE
 #endif
 
+// ----------- パブリック関数 ----------- //
 // コンストラクタ
 OutputTree::OutputTree(int outfmt)
 {
+	// 初期化
 	mOutputFormat = outfmt;
-	mPreOut = nullptr;
+	mPreOut       = nullptr;
 }
 
-// 出力
+// 出力する
 String^ OutputTree::Output(int indent, String^ out, unsigned char mark)
 {
-	String^ ret = nullptr;
-	String^ output;
+	String^ ret = nullptr;		// 戻り値
+	String^ output;				// 出力文字列
 
-	output = outChar(mark, indent);
+	// 出力する文字列を生成
+	output = OutString(mark, indent);
+
 	if (output != nullptr) {
 #ifdef DEBUG_OUTPUT_TREE
 		Debug::WriteLine(output + out);
@@ -29,11 +33,14 @@ String^ OutputTree::Output(int indent, String^ out, unsigned char mark)
 	return ret;
 }
 
-// マーク変換
-String^ OutputTree::convMark(int mark)
-{
-	String^ ret = nullptr;
 
+// ----------- プライベート関数 ----------- //
+// マークを変換する
+String^ OutputTree::ConvMark(int mark)
+{
+	String^ ret = nullptr;		// 戻り値
+
+	// int型からString型に変換
 	switch (mark) {
 		case OT_MARK_BR:
 			ret = ST_MARK_BR;
@@ -52,11 +59,12 @@ String^ OutputTree::convMark(int mark)
 	return ret;
 }
 
-// インデント変換
-String^ OutputTree::convIndent(int indent)
+// インデントを変換する
+String^ OutputTree::ConvIndent(int indent)
 {
-	String^ ret = "";
+	String^ ret = "";			// 戻り値
 
+	// int型からString型に変換
 	for (int i = 0; i < indent; i++) {
 		ret += TAB;
 	}
@@ -64,29 +72,29 @@ String^ OutputTree::convIndent(int indent)
 	return ret;
 }
 
-// 出力
-String^ OutputTree::outChar(int mark, int indent)
+// 出力文字列を生成する
+String^ OutputTree::OutString(int mark, int indent)
 {
-	int i;
-	String^ ret = nullptr;
-	String^ idt;
-	String^ mk;
+	int     i;
+	String^ ret = nullptr;		// 戻り値
+	String^ mk;					// マーク
+	String^ idt;				// インデント
 
-	mk = convMark(mark);		// マーク変換
-	idt = convIndent(indent);	// インデント変換
+	mk  = ConvMark(mark);		// マーク変換
+	idt = ConvIndent(indent);	// インデント変換
 
 	if (mPreOut == nullptr) {	// 前回値なし
 		// マークのみ設定
 		ret = mk;
 
 		// 前回値設定
-		mPreOut = gcnew array<int^>(1);
+		mPreOut    = gcnew array<int^>(1);
 		mPreOut[0] = CL_STRING;
 	} else {
 		array<int^>^ preOutTmp;	// 前回値一次取得用
 		
 		// 前回値のサイズから前回値一次取得用生成
-		int size = mPreOut->Length;
+		int size  = mPreOut->Length;
 		preOutTmp = gcnew array<int^>(size);
 
 		// 配列コピー
@@ -188,5 +196,3 @@ String^ OutputTree::outChar(int mark, int indent)
 	
 	return ret;
 }
-
-

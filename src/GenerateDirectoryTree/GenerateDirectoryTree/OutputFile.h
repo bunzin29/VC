@@ -4,44 +4,43 @@ using namespace System;
 using namespace System::IO;
 
 
+// ファイル出力クラス
 ref class OutputFile
 {
+// パブリック関数
 public:
 	// コンストラクタ
 	OutputFile(void);
 
-
-	// 初期設定
+	// 初期設定を行う
 	void Init(String^ path, String^ file, String^ ext);
-	// ファイル出力
+	// ファイル出力を行う
 	bool OutFile(String^ s);
-	// ファイルクローズ
-	void CloseFile();
+	// ファイルクローズする
+	void CloseFile(void);
 
 	// アクセサ
-	String^ getFilePath(void);
-	// ファイル保存形式
-	void setFileExt(String^ fileExt);
-	String^ getFileExt();
-	// 保存先
-	void setOutputPath(String^ opPath);
-	String^ getOutputPath();
-	// ファイル名
-	void setFileName(String^ fileName);
-	String^ getFilename();
+	// ファイルパスを取得する
+	String^ GetFilePath(void);
+	// ファイル保存形式を設定する
+	void SetFileExt(String^ fileExt);
+	// ファイル保存形式を取得する
+	String^ GetFileExt();
+	// 保存先を設定する
+	void SetOutputPath(String^ opPath);
+	// 保存先を取得する
+	String^ GetOutputPath();
+	// ファイル名を設定する
+	void SetFileName(String^ fileName);
+	// ファイル名を取得する
+	String^ GetFilename();
 
+// プライベート変数
 private:
-	// ファイルパス(全部)
-	String^ mFilePath;
-	// ファイル保存形式
-	String^ mFileExt;
-	// 保存先
-	String^ mOutputPath;
-	// ファイル名
-	String^ mOutputFileName;
+	StreamWriter^ mSw;			// ファイルストリーマー
 
-	// ファイルストリーマー
-	StreamWriter^ mSw;
-
+	String^ mFilePath;			// ファイルパス(全部)
+	String^ mFileExt;			// ファイル保存形式
+	String^ mOutputPath;		// 保存先
+	String^ mOutputFileName;	// ファイル名
 };
-

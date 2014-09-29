@@ -2,8 +2,11 @@
 
 using namespace System;
 using namespace System::IO;
+#ifdef _DEBUG
 using namespace System::Diagnostics;
+#endif
 
+// ツリー出力クラス
 ref class OutputTree
 {
 // マーク種別
@@ -31,25 +34,26 @@ ref class OutputTree
 #define CL_MARK_END			(3)		// マーク終了
 #define CL_NO_MARK			(4)		// マーク無し
 
+// パブリック関数
 public:
 	// コンストラクタ
 	OutputTree(int outfmt);
 
-	// 出力
+	// 出力する
 	String^ Output(int indent, String^ out, unsigned char mark);
 
+// プライベート変数
 private:
-	// マーク変換
-	String^ convMark(int mark);
-	// インデント変換
-	String^ convIndent(int indent);
-	// 出力
-	String^ outChar(int mark, int indent);
+	int          mOutputFormat;		// 出力フォーマット
+	array<int^>^ mPreOut;			// 前回値
 
-	// 出力フォーマット
-	int mOutputFormat;
-	// 前回値
-	array<int^>^ mPreOut;
-	
+// プライベート関数
+private:
+	// マークを変換する
+	String^ ConvMark(int mark);
+	// インデントを変換する
+	String^ ConvIndent(int indent);
+	// 出力文字列を生成する
+	String^ OutString(int mark, int indent);
 };
 

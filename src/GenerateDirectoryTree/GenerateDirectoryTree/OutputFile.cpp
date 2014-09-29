@@ -1,81 +1,87 @@
 #include "stdafx.h"
 #include "OutputFile.h"
 
+// ----------- パブリック関数 ----------- //
 // コンストラクタ
 OutputFile::OutputFile(void)
 {
 }
 
-// 初期化
+// 初期化を行う
 void OutputFile::Init(String^ path, String^ file, String^ ext)
 {
-	mOutputPath = path;
+	// ファイル情報設定
+	mOutputPath     = path;
 	mOutputFileName = file;
-	mFileExt = ext;
+	mFileExt        = ext;
 
+	// ファイル名(パス)を設定
 	mFilePath = path + "\\" + file + "." + ext;
-//	f = file + "." + ext;
+
 	// ファイルオープン
 	mSw = gcnew StreamWriter(mFilePath);
-
 }
 
-// ファイル書き込み
+// ファイル出力を行う
 bool OutputFile::OutFile(String^ s)
 {
-	bool ret;
+	bool ret;		// 戻り値
+
 	// ファイルオープン中
 	if (mSw != nullptr) {
+		// ファイル出力
 		mSw->WriteLine(s);
 		ret = true;
 	} else {
 		ret = false;
-
 	}
 
 	return ret;
 }
 
-// ファイルクローズ
-void OutputFile::CloseFile()
+// ファイルクローズする
+void OutputFile::CloseFile(void)
 {
 	if (mSw != nullptr) {
 		mSw->Close();
 	}
-
 }
 
-String^ OutputFile::getFilePath(void)
+// ファイルパスを取得する
+String^ OutputFile::GetFilePath(void)
 {
 	return mFilePath;
 }
 
-// ファイル保存形式
-void OutputFile::setFileExt(String^ fileExt)
+// ファイル保存形式を取得する
+void OutputFile::SetFileExt(String^ fileExt)
 {
 	mFileExt = fileExt;
 }
-String^ OutputFile::getFileExt()
+// ファイル保存形式を取得する
+String^ OutputFile::GetFileExt()
 {
 	return mFileExt;
 }
 
-// 保存先
-void OutputFile::setOutputPath(String^ opPath)
+// 保存先を設定する
+void OutputFile::SetOutputPath(String^ opPath)
 {
 	mOutputPath = opPath;
 }
-String^ OutputFile::getOutputPath()
+// 保存先を取得する
+String^ OutputFile::GetOutputPath()
 {
 	return mOutputPath;
 }
 
-// ファイル名
-void OutputFile::setFileName(String^ fileName)
+// ファイル名を設定する
+void OutputFile::SetFileName(String^ fileName)
 {
 	mOutputFileName = fileName;
 }
-String^ OutputFile::getFilename()
+// ファイル名を取得する
+String^ OutputFile::GetFilename()
 {
 	return mOutputFileName;
 }

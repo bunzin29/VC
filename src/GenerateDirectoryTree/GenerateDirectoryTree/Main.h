@@ -4,21 +4,20 @@
 
 using namespace System;
 using namespace System::IO;
-using namespace System::ComponentModel;
 
-// デバッグ用
-using namespace System::Diagnostics;
-
+// メインクラス
 ref class Main
 {
+// パブリック関数
 public:
 	// コンストラクタ
 	Main(void);
 	
-	// 実行
+	// 実行する
 	bool Start(String^ dir, bool tab, BackgroundWorker^ worker, DoWorkEventArgs^ e, long cnt);
 
+// プライベート変数
 private:
-	GenerateDirectory^ mGenDir;
+	GenerateDirectory^ mGenDir;		// ディレクトリ構成生成クラス
 };
 
