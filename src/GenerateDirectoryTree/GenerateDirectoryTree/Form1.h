@@ -19,33 +19,30 @@ namespace GenerateDirectoryTree {
 	public ref class Form1 : public System::Windows::Forms::Form
 	{
 	private:
-		Main^ mMain;
-		Config^ mConfig;
-		String^ inputDirList;//フルパスを格納する配列
-		long mAllDirCnt;
+		Main^   mMain;				// メインクラス
+		Config^ mConfig;			// 設定クラス
+		String^ mInputDirList;		//フルパスを格納する配列
+		long    mAllDirCnt;			// 実行するディレクトリ及びファイル総数
 
 		// フォームコントロール
+	private:
 		System::Windows::Forms::Button^            btn_exe;				// 実行ボタン
 		System::Windows::Forms::Button^            btn_clear;			// クリアボタン
 		System::Windows::Forms::CheckBox^          cb_tab;				// タブチェックボックス
 		System::ComponentModel::BackgroundWorker^  bgw_exe;				// 実行スレッド
-	private: System::Windows::Forms::MenuStrip^  menuStrip1;
-	private: System::Windows::Forms::ToolStripMenuItem^  ヘルプToolStripMenuItem;
-	private: System::Windows::Forms::ToolStripMenuItem^  バージョンToolStripMenuItem;
-	private: System::Windows::Forms::ProgressBar^  progressBar1;
-
-			 System::Windows::Forms::ListBox^           lb_in_dir;			// ディレクトリリストボックス
+		System::Windows::Forms::MenuStrip^         menuStrip;					// メニュー
+		System::Windows::Forms::ToolStripMenuItem^ ヘルプToolStripMenuItem;		// メニュー項目：ヘルプ
+		System::Windows::Forms::ToolStripMenuItem^ バージョンToolStripMenuItem;	// メニュー項目：バージョン
+		System::Windows::Forms::ProgressBar^       progressBar;			// プログレスバー
+		System::Windows::Forms::ListBox^           lb_in_dir;			// ディレクトリリストボックス
 
 	public:
 		Form1(void)
 		{
 			InitializeComponent();
-			//
-			//TODO: ここにコンストラクター コードを追加します
-			//
 
-			mMain = gcnew Main();
-			mConfig = gcnew Config();
+			mMain      = gcnew Main();		// メインクラス
+			mConfig    = gcnew Config();	// 設定クラス
 			mAllDirCnt = 0;
 
 #ifdef _DEBUG
@@ -85,11 +82,11 @@ namespace GenerateDirectoryTree {
 			this->btn_clear = (gcnew System::Windows::Forms::Button());
 			this->cb_tab = (gcnew System::Windows::Forms::CheckBox());
 			this->bgw_exe = (gcnew System::ComponentModel::BackgroundWorker());
-			this->menuStrip1 = (gcnew System::Windows::Forms::MenuStrip());
+			this->menuStrip = (gcnew System::Windows::Forms::MenuStrip());
 			this->ヘルプToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->バージョンToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->progressBar1 = (gcnew System::Windows::Forms::ProgressBar());
-			this->menuStrip1->SuspendLayout();
+			this->progressBar = (gcnew System::Windows::Forms::ProgressBar());
+			this->menuStrip->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// lb_in_dir
@@ -145,14 +142,14 @@ namespace GenerateDirectoryTree {
 			this->bgw_exe->ProgressChanged += gcnew System::ComponentModel::ProgressChangedEventHandler(this, &Form1::backgroundWorker1_ProgressChanged);
 			this->bgw_exe->RunWorkerCompleted += gcnew System::ComponentModel::RunWorkerCompletedEventHandler(this, &Form1::backgroundWorker1_RunWorkerCompleted);
 			// 
-			// menuStrip1
+			// menuStrip
 			// 
-			this->menuStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) {this->ヘルプToolStripMenuItem});
-			this->menuStrip1->Location = System::Drawing::Point(0, 0);
-			this->menuStrip1->Name = L"menuStrip1";
-			this->menuStrip1->Size = System::Drawing::Size(417, 26);
-			this->menuStrip1->TabIndex = 4;
-			this->menuStrip1->Text = L"menuStrip1";
+			this->menuStrip->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) {this->ヘルプToolStripMenuItem});
+			this->menuStrip->Location = System::Drawing::Point(0, 0);
+			this->menuStrip->Name = L"menuStrip";
+			this->menuStrip->Size = System::Drawing::Size(417, 26);
+			this->menuStrip->TabIndex = 4;
+			this->menuStrip->Text = L"menuStrip";
 			// 
 			// ヘルプToolStripMenuItem
 			// 
@@ -168,29 +165,29 @@ namespace GenerateDirectoryTree {
 			this->バージョンToolStripMenuItem->Text = L"バージョン(&V)";
 			this->バージョンToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::バージョンToolStripMenuItem_Click);
 			// 
-			// progressBar1
+			// progressBar
 			// 
-			this->progressBar1->Location = System::Drawing::Point(254, 120);
-			this->progressBar1->Name = L"progressBar1";
-			this->progressBar1->Size = System::Drawing::Size(143, 23);
-			this->progressBar1->TabIndex = 5;
+			this->progressBar->Location = System::Drawing::Point(254, 120);
+			this->progressBar->Name = L"progressBar";
+			this->progressBar->Size = System::Drawing::Size(143, 23);
+			this->progressBar->TabIndex = 5;
 			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(417, 151);
-			this->Controls->Add(this->progressBar1);
+			this->Controls->Add(this->progressBar);
 			this->Controls->Add(this->cb_tab);
 			this->Controls->Add(this->btn_clear);
 			this->Controls->Add(this->btn_exe);
 			this->Controls->Add(this->lb_in_dir);
-			this->Controls->Add(this->menuStrip1);
-			this->MainMenuStrip = this->menuStrip1;
+			this->Controls->Add(this->menuStrip);
+			this->MainMenuStrip = this->menuStrip;
 			this->Name = L"Form1";
 			this->Text = L"Form1";
-			this->menuStrip1->ResumeLayout(false);
-			this->menuStrip1->PerformLayout();
+			this->menuStrip->ResumeLayout(false);
+			this->menuStrip->PerformLayout();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -198,19 +195,22 @@ namespace GenerateDirectoryTree {
 #pragma endregion
 
 	public :
+		// デリゲート
 		delegate void delSetControl(bool en);
 		delSetControl^ mDelSetCtrl;
 	
 	private:
+		// コントロール設定
 		void SetControl(bool en)
 		{
 			if (en) {
+				// 有効設定
 				setEnableCtrl();
 			} else {
+				// 無効設定
 				setDisableCtrl();
 			}
 		}
-
 
 	private:
 		// コントロール有効
@@ -236,16 +236,16 @@ namespace GenerateDirectoryTree {
 			array<String^>^ s = (array<String^>^)e->Data->GetData(DataFormats::FileDrop, false);
 			for (int i = 0; i < s->Length; i++) {
 #ifdef _DEBUG
-					Debug::WriteLine(s[i]);
+				Debug::WriteLine(s[i]);
 #endif
-					inputDirList = s[i];
+				// 入力文字列設定
+				mInputDirList = s[i];
 
-					DirectoryInfo^ di = gcnew DirectoryInfo(s[i]);
-
-					if (di->Exists) {
-						// ディレクトリのみ追加
-						this->lb_in_dir->Items->Add(s[i]);
-					}
+				DirectoryInfo^ di = gcnew DirectoryInfo(s[i]);
+				if (di->Exists) {
+					// ディレクトリのみ追加
+					this->lb_in_dir->Items->Add(s[i]);
+				}
 			}
 		}
 
@@ -264,6 +264,7 @@ namespace GenerateDirectoryTree {
 		// アイテム変更
 		System::Void lb_in_dir_SelectedIndexChanged(System::Object^  /*sender*/, System::EventArgs^  /*e*/)
 		{
+			// T.B.D
 		}
 
 	private:
@@ -351,8 +352,7 @@ namespace GenerateDirectoryTree {
 			int value;
 			
 			value = e->ProgressPercentage;
-			this->progressBar1->Value = value;
-
+			this->progressBar->Value = value;
 		}
 
 	private:
