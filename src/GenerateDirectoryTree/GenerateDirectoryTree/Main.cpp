@@ -11,15 +11,14 @@ Main::Main(void)
 }
 
 // ŽÀs
-bool Main::Start(String^ dir, bool tab)
+bool Main::Start(String^ dir, bool tab, BackgroundWorker^ worker, DoWorkEventArgs^ e, long cnt)
 {
 	bool ret = true;
 
-//	mGenDir->Init("E:\\VC_TEST\\Sample", OUTPUT_FORMAT_TREE);
 	if (tab) {
-		mGenDir->Init(dir, OUTPUT_FORMAT_TAB);
+		mGenDir->Init(dir, OUTPUT_FORMAT_TAB, worker, e, cnt);
 	} else {
-		mGenDir->Init(dir, OUTPUT_FORMAT_TREE);
+		mGenDir->Init(dir, OUTPUT_FORMAT_TREE, worker, e, cnt);
 	}
 
 	mGenDir->Exec(nullptr, nullptr);

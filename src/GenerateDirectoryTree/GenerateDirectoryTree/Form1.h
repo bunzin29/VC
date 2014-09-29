@@ -22,6 +22,7 @@ namespace GenerateDirectoryTree {
 		Main^ mMain;
 		Config^ mConfig;
 		String^ inputDirList;//フルパスを格納する配列
+		long mAllDirCnt;
 
 		// フォームコントロール
 		System::Windows::Forms::Button^            btn_exe;				// 実行ボタン
@@ -31,6 +32,7 @@ namespace GenerateDirectoryTree {
 	private: System::Windows::Forms::MenuStrip^  menuStrip1;
 	private: System::Windows::Forms::ToolStripMenuItem^  ヘルプToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  バージョンToolStripMenuItem;
+	private: System::Windows::Forms::ProgressBar^  progressBar1;
 
 			 System::Windows::Forms::ListBox^           lb_in_dir;			// ディレクトリリストボックス
 
@@ -44,6 +46,7 @@ namespace GenerateDirectoryTree {
 
 			mMain = gcnew Main();
 			mConfig = gcnew Config();
+			mAllDirCnt = 0;
 
 #ifdef _DEBUG
 			lb_in_dir->Items->Add("E:\\GitHub\\VC\\src\\GenerateDirectoryTree\\bin\\05_議事録(CV#3)");
@@ -85,6 +88,7 @@ namespace GenerateDirectoryTree {
 			this->menuStrip1 = (gcnew System::Windows::Forms::MenuStrip());
 			this->ヘルプToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->バージョンToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->progressBar1 = (gcnew System::Windows::Forms::ProgressBar());
 			this->menuStrip1->SuspendLayout();
 			this->SuspendLayout();
 			// 
@@ -135,6 +139,8 @@ namespace GenerateDirectoryTree {
 			// 
 			// bgw_exe
 			// 
+			this->bgw_exe->WorkerReportsProgress = true;
+			this->bgw_exe->WorkerSupportsCancellation = true;
 			this->bgw_exe->DoWork += gcnew System::ComponentModel::DoWorkEventHandler(this, &Form1::backgroundWorker_DoWork);
 			this->bgw_exe->ProgressChanged += gcnew System::ComponentModel::ProgressChangedEventHandler(this, &Form1::backgroundWorker1_ProgressChanged);
 			this->bgw_exe->RunWorkerCompleted += gcnew System::ComponentModel::RunWorkerCompletedEventHandler(this, &Form1::backgroundWorker1_RunWorkerCompleted);
@@ -162,11 +168,19 @@ namespace GenerateDirectoryTree {
 			this->バージョンToolStripMenuItem->Text = L"バージョン(&V)";
 			this->バージョンToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::バージョンToolStripMenuItem_Click);
 			// 
+			// progressBar1
+			// 
+			this->progressBar1->Location = System::Drawing::Point(254, 120);
+			this->progressBar1->Name = L"progressBar1";
+			this->progressBar1->Size = System::Drawing::Size(143, 23);
+			this->progressBar1->TabIndex = 5;
+			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(417, 151);
+			this->Controls->Add(this->progressBar1);
 			this->Controls->Add(this->cb_tab);
 			this->Controls->Add(this->btn_clear);
 			this->Controls->Add(this->btn_exe);
@@ -285,15 +299,27 @@ namespace GenerateDirectoryTree {
 
 	private:
 		// スレッド実行処理
-		System::Void backgroundWorker_DoWork(System::Object^  /*sender*/, System::ComponentModel::DoWorkEventArgs^  /*e*/)
+		System::Void backgroundWorker_DoWork(System::Object^  /*sender*/, System::ComponentModel::DoWorkEventArgs^  e)
 		{
 			int i;
 			int procCnt = 0;
 			int cnt;
 
+			// 実行するディレクトリ数
 			cnt = this->lb_in_dir->Items->Count;
+
+			// 実行する全てのディレクトリ及びファイル数を計算
+			mAllDirCnt = 0;
 			for (i = 0; i < cnt; i++) {
-#ifdef _DEBUG
+				mAllDirCnt += Directory::GetDirectories(this->lb_in_dir->Items[i]->ToString(),
+							"*", System::IO::SearchOption::AllDirectories)->Length;
+				mAllDirCnt += Directory::GetFiles(this->lb_in_dir->Items[i]->ToString(),
+							"*", System::IO::SearchOption::AllDirectories)->Length;
+			}
+
+
+			for (i = 0; i < cnt; i++) {
+#ifdef _DEBUG	// デバッグでは無効
 				Debug::WriteLine(this->lb_in_dir->Items[i]->ToString());
 #endif
 
@@ -306,19 +332,27 @@ namespace GenerateDirectoryTree {
 					}
 				}
 #endif
-				mMain->Start(this->lb_in_dir->Items[i]->ToString(), this->cb_tab->Checked);
+				mMain->Start(this->lb_in_dir->Items[i]->ToString(), this->cb_tab->Checked,
+					this->bgw_exe, e, mAllDirCnt);
 				procCnt++;
 			}
 			
+#ifndef _DEBUG	// デバッグでは無効
 			if (procCnt > 0) {
 				MessageBox::Show("正常終了");
 			}
+#endif
 		}
 
 	private:
 		// 変更
-		System::Void backgroundWorker1_ProgressChanged(System::Object^  /*sender*/, System::ComponentModel::ProgressChangedEventArgs^  /*e*/)
+		System::Void backgroundWorker1_ProgressChanged(System::Object^  /*sender*/, System::ComponentModel::ProgressChangedEventArgs^  e)
 		{
+			int value;
+			
+			value = e->ProgressPercentage;
+			this->progressBar1->Value = value;
+
 		}
 
 	private:
@@ -331,13 +365,14 @@ namespace GenerateDirectoryTree {
 
 	private:
 		// バージョン
-		System::Void バージョンToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
+		System::Void バージョンToolStripMenuItem_Click(System::Object^  /*sender*/, System::EventArgs^  /*e*/)
 		{
 			String^ ver;
 
 			ver = mConfig->version;
 			MessageBox::Show("ソフトウェアバージョン： " + ver, "バージョン情報");
 		}
+
 };
 }
 

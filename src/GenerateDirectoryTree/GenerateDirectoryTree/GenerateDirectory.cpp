@@ -9,8 +9,13 @@ GenerateDirectory::GenerateDirectory(void)
 // ----------- public ----------- //
 
 // 初期設定
-void GenerateDirectory::Init(String^ dir, int outfmt)
+void GenerateDirectory::Init(String^ dir, int outfmt, BackgroundWorker^ worker, DoWorkEventArgs^ doWkEvt, long cnt)
 {
+	mWorker  = worker;
+	mDoWkEvt = doWkEvt;
+	mAllCnt  = cnt;
+	mExeCnt  = 0;
+
 	// カレントディレクトリ設定
 	mCurrentDir = dir;
 	// 出力フォーマットを指定して出力クラス生成
@@ -141,6 +146,10 @@ void GenerateDirectory::serchSubDirectory(String^ dir, bool exFile)
 	array<String^>^ dirs;		// ディレクトリ一覧
 	String^ dirName;
 
+	if (endExeThread()) {
+		return;
+	}
+
 	mIndent++;					// インデントインクリメント
 
 	// 全てのディレクトリ取得
@@ -232,7 +241,38 @@ bool GenerateDirectory::setOutput(int indent, String^ out, unsigned char mark)
 		if (data != nullptr && mOfile != nullptr) {
 			// データをファイル出力する
 			mOfile->OutFile(data);
+
+			// プログレスバー更新
+			updatePrg();
 		}
+	}
+
+	return ret;
+}
+
+// プログレスバー更新
+bool GenerateDirectory::updatePrg(void)
+{
+	bool ret = true;
+	double tmp;
+
+	mExeCnt++;
+	tmp = (double)mExeCnt / (double)mAllCnt;
+	tmp *= 100.0;
+
+	mWorker->ReportProgress((int)tmp);
+
+	return ret;
+}
+
+// 実行スレッド判定
+bool GenerateDirectory::endExeThread(void)
+{
+	bool ret = false;
+
+	if (mWorker->CancellationPending) {
+		mDoWkEvt->Cancel = true;
+		ret = true;
 	}
 
 	return ret;

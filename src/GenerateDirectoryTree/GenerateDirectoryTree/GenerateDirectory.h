@@ -6,6 +6,7 @@
 using namespace System;
 using namespace System::IO;
 using namespace System::Diagnostics;
+using namespace System::ComponentModel;
 
 ref class GenerateDirectory
 {
@@ -14,7 +15,7 @@ public:
 	GenerateDirectory(void);
 
 	// 初期設定
-	void Init(String^ dir, int outfmt);
+	void Init(String^ dir, int outfmt, BackgroundWorker^ worker, DoWorkEventArgs^ doWkEvt, long cnt);
 	// 実行
 	bool Exec(String^ dirPath, String^ filePath);
 
@@ -30,6 +31,11 @@ private:
 
 	String^ mDirPath;			// ファイル保存先ディレクトリ
 	String^ mFileName;			// ファイル名
+
+	BackgroundWorker^ mWorker;
+	DoWorkEventArgs^  mDoWkEvt;
+	long              mAllCnt;
+	long              mExeCnt;
 
 	// 初期化
 	void Init();
@@ -49,6 +55,10 @@ private:
 	bool isFiles(String^ dir);
 	// 出力文字列設定
 	bool setOutput(int indent, String^ out, unsigned char mark);
+	// プログレスバー更新
+	bool updatePrg(void);
+	// 実行スレッド判定
+	bool endExeThread(void);
 
 };
 
