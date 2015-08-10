@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Threading;
 
 using iTextSharp.text;
 using iTextSharp.text.pdf;
@@ -20,6 +21,8 @@ namespace FileAnalyzer
 
     public partial class Form1 : Form
     {
+        delegate void MyDelegate();
+
         // 表示単位
         const int OUT_SIZE_BYTE  = 0;
         const int OUT_SIZE_KBYTE = 1;
@@ -27,16 +30,15 @@ namespace FileAnalyzer
         const int OUT_SIZE_GBYTE = 3;
         const int OUT_SIZE_TBYTE = 4;
 
-        int mOutSize = 0;
-        long mOutAllSize = 0;
-
+        int mSelOutSize = 0;                // 選択中の表示単位
+        long mOutAllSize = 0;               // 表示中の全ファイルサイズ
 
         public Form1()
         {
             InitializeComponent();
 
+            // 初期化処理
             Init();
-
         }
 
         // 初期化処理
@@ -46,7 +48,7 @@ namespace FileAnalyzer
             comb_all_size.Items.Add("Kbyte");
             comb_all_size.Items.Add("Mbyte");
             comb_all_size.SelectedIndex = 0;
-            mOutSize = 0;
+            mSelOutSize = 0;
         }
 
         // ファイル追加
@@ -69,7 +71,7 @@ namespace FileAnalyzer
             // 3桁ごとにカンマを付ける
             size = fileSize.ToString("#,#");
 
-            dataGridView1.Rows.Add(file, size, page);
+            dataGridView.Rows.Add(file, size, page);
         }
 
         // ディレクトリ選択
@@ -98,8 +100,8 @@ namespace FileAnalyzer
 
             }
 
-            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-
+            // 表示領域設定
+            dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
 
         // ディレクトリ検索
@@ -182,7 +184,7 @@ namespace FileAnalyzer
             {
                 //OKボタンがクリックされたとき
                 //選択されたファイル名を表示する
-                Console.WriteLine(ofd.FileName);
+                AddFile(ofd.FileName);
             }
         }
 
@@ -190,12 +192,22 @@ namespace FileAnalyzer
         private void btn_clr_Click(object sender, EventArgs e)
         {
             // 全てクリア
-            dataGridView1.Rows.Clear();
+            dataGridView.Rows.Clear();
         }
 
         // 実行ボタン
         private void btn_exe_Click(object sender, EventArgs e)
         {
+            Thread thread = new Thread(new ThreadStart(ThreadExe));
+            thread.IsBackground = true;
+            thread.Start();
+        }
+
+        private void exeProc()
+        {
+            Thread.Sleep(5000);
+
+            return;
             String dir = txt_dir.Text;
             if (dir == "") {
                 // ディレクトリが選択されていない
@@ -216,9 +228,9 @@ namespace FileAnalyzer
                 filter = null;
             }
 
-            String [] split;
+            String[] split;
             if (filter != null) {
-                split = filter.Split(new Char[] {' ', ',', ':', '\t'});
+                split = filter.Split(new Char[] { ' ', ',', ':', '\t' });
             } else {
                 split = null;
             }
@@ -228,6 +240,14 @@ namespace FileAnalyzer
 
             // 結果出力
             outResult();
+
+        }
+
+        // スレッドで実行
+        private void ThreadExe()
+        {
+            Invoke(new MyDelegate(exeProc));
+            
         }
 
         // 結果表示
@@ -244,11 +264,11 @@ namespace FileAnalyzer
         {
             long allSize = 0;
             double dallSize = 0;
-            int row = dataGridView1.RowCount;
+            int row = dataGridView.RowCount;
             String str = "";
 
             for (int r = 0; r < row; r++) {
-                DataGridViewRow rowData = dataGridView1.Rows[r];
+                DataGridViewRow rowData = dataGridView.Rows[r];
                 long s = long.Parse(((String)rowData.Cells[idx].Value).Replace(",", ""));
                 allSize += s;
             }
@@ -279,11 +299,14 @@ namespace FileAnalyzer
         private void outAllPage(int idx)
         {
             long allPage = 0;
-            int row = dataGridView1.RowCount;
+            int row = dataGridView.RowCount;
             for (int r = 0; r < row; r++) {
-                DataGridViewRow rowData = dataGridView1.Rows[r];
-                long p = long.Parse((String)rowData.Cells[idx].Value);
-                allPage += p;
+                DataGridViewRow rowData = dataGridView.Rows[r];
+                try {
+                    long p = long.Parse((String)rowData.Cells[idx].Value);
+                    allPage += p;
+                } catch (Exception) {
+                }
             }
             txt_all_page.Text = allPage.ToString();
         }
@@ -301,17 +324,17 @@ namespace FileAnalyzer
         // CSV出力ボタン
         private void btn_csv_Click(object sender, EventArgs e)
         {
-            if (dataGridView1.RowCount > 0) {
+            if (dataGridView.RowCount > 0) {
                 Encoding enc = Encoding.GetEncoding("Shift_JIS");
-                int colCount = dataGridView1.Columns.Count;
+                int colCount = dataGridView.Columns.Count;
                 int lastColIndex = colCount - 1;
 
                 // 出力ファイルを開く
                 StreamWriter sr = new StreamWriter("out.csv", false, enc);
 
-                int row = dataGridView1.RowCount;
+                int row = dataGridView.RowCount;
                 for (int r = 0; r < row; r++ ) {
-                    DataGridViewRow rowData = dataGridView1.Rows[r];
+                    DataGridViewRow rowData = dataGridView.Rows[r];
                     if (rowData != null) {
 
                         for (int i = 0; i < colCount; i++) {
@@ -385,8 +408,8 @@ namespace FileAnalyzer
 
             if (txt_all_size.Text == "") return;
 
-            if (mOutSize != comb_all_size.SelectedIndex) {
-                mOutSize = comb_all_size.SelectedIndex;
+            if (mSelOutSize != comb_all_size.SelectedIndex) {
+                mSelOutSize = comb_all_size.SelectedIndex;
             } else {
                 return;
             }

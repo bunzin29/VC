@@ -9,7 +9,7 @@ namespace FileAnalyzer
     abstract class File
     {
         protected String mFileName;           // ファイル名
-        protected int mFileSize;              // ファイルサイズ
+        protected int mFileSize = 0;              // ファイルサイズ
 
         // コンストラクタ
         public File()
