@@ -11,6 +11,7 @@ namespace ImageDivider
 	public class Util
 	{
 
+		// サムネイル画像生成
 		static public Image createThumbnail(Image image, int w, int h)
 		{
 			try {

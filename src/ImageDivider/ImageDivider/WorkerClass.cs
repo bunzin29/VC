@@ -105,14 +105,19 @@ namespace ImageDivider
 				WriteLog("サムネイル作成終了");
 
 				if (idxList != idxImage) {
+					String errLog = "Error:idxList(" + idxList + ") idxImage(" + idxImage + ")";
+						
 					// エラー表示
 					MessageBox.Show(
-						"Error:idxList(" + idxList + ") idxImage(" + idxImage + ")",
+						errLog,
 						"caption",
 						MessageBoxButtons.OKCancel,
 						MessageBoxIcon.Information,
 						MessageBoxDefaultButton.Button1,
 						MessageBoxOptions.DefaultDesktopOnly);
+
+					WriteLog(errLog);
+
 				}
 
 			}

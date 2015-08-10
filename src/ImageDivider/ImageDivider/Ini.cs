@@ -40,6 +40,11 @@ public class Ini
 		}
  */
     }
+
+	public string GetIniFilePath()
+	{
+		return filePath;
+	}
  
     /// <summary>
     /// sectionとkeyからiniファイルの設定値を取得、設定します。 

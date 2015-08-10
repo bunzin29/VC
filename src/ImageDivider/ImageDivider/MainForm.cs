@@ -491,6 +491,15 @@ namespace ImageDivider
 			}
 		}
 
+		// iniファイルを開く
+		private void btn_openini_Click(object sender, EventArgs e)
+		{
+			String path = System.Reflection.Assembly.GetExecutingAssembly().Location;
+			System.Diagnostics.Process p = System.Diagnostics.Process.Start(
+				Path.GetFileNameWithoutExtension(path) + ".ini");
+		}
+
+
 		// キーイベント
 		private void MainForm_KeyDown(object sender, KeyEventArgs e)
 		{
@@ -1085,8 +1094,6 @@ namespace ImageDivider
 		{
 			Evt_CopyImage();
 		}
-
-
 
 	}
 }

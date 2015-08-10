@@ -40,6 +40,13 @@
 			this.btn_pre = new System.Windows.Forms.Button();
 			this.btn_copy = new System.Windows.Forms.Button();
 			this.panel1 = new System.Windows.Forms.Panel();
+			this.panel3 = new System.Windows.Forms.Panel();
+			this.radio_M = new System.Windows.Forms.RadioButton();
+			this.radio_K = new System.Windows.Forms.RadioButton();
+			this.lab_Vmem = new System.Windows.Forms.Label();
+			this.lab_Pmem = new System.Windows.Forms.Label();
+			this.txt_Vmem = new System.Windows.Forms.TextBox();
+			this.txt_Pmem = new System.Windows.Forms.TextBox();
 			this.btn_delLog = new System.Windows.Forms.Button();
 			this.imageList = new System.Windows.Forms.ImageList(this.components);
 			this.radio_Details = new System.Windows.Forms.RadioButton();
@@ -47,17 +54,11 @@
 			this.radio_LaggeIcon = new System.Windows.Forms.RadioButton();
 			this.chkBox_sub = new System.Windows.Forms.CheckBox();
 			this.worker_main = new System.ComponentModel.BackgroundWorker();
-			this.txt_Pmem = new System.Windows.Forms.TextBox();
-			this.txt_Vmem = new System.Windows.Forms.TextBox();
-			this.lab_Pmem = new System.Windows.Forms.Label();
-			this.lab_Vmem = new System.Windows.Forms.Label();
-			this.panel3 = new System.Windows.Forms.Panel();
-			this.radio_M = new System.Windows.Forms.RadioButton();
-			this.radio_K = new System.Windows.Forms.RadioButton();
+			this.btn_openini = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.picbox_image)).BeginInit();
 			this.panel1.SuspendLayout();
-			this.panel2.SuspendLayout();
 			this.panel3.SuspendLayout();
+			this.panel2.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// picbox_image
@@ -142,7 +143,7 @@
 			// 
 			this.btn_next.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.btn_next.Font = new System.Drawing.Font("MS UI Gothic", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-			this.btn_next.Location = new System.Drawing.Point(124, 0);
+			this.btn_next.Location = new System.Drawing.Point(113, 0);
 			this.btn_next.Name = "btn_next";
 			this.btn_next.Size = new System.Drawing.Size(99, 64);
 			this.btn_next.TabIndex = 8;
@@ -166,7 +167,7 @@
 			// 
 			this.btn_copy.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.btn_copy.Font = new System.Drawing.Font("MS UI Gothic", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-			this.btn_copy.Location = new System.Drawing.Point(252, 0);
+			this.btn_copy.Location = new System.Drawing.Point(236, 0);
 			this.btn_copy.Name = "btn_copy";
 			this.btn_copy.Size = new System.Drawing.Size(99, 64);
 			this.btn_copy.TabIndex = 11;
@@ -178,6 +179,7 @@
 			// 
 			this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.panel1.Controls.Add(this.btn_openini);
 			this.panel1.Controls.Add(this.panel3);
 			this.panel1.Controls.Add(this.lab_Vmem);
 			this.panel1.Controls.Add(this.lab_Pmem);
@@ -192,11 +194,80 @@
 			this.panel1.Size = new System.Drawing.Size(728, 64);
 			this.panel1.TabIndex = 13;
 			// 
+			// panel3
+			// 
+			this.panel3.Controls.Add(this.radio_M);
+			this.panel3.Controls.Add(this.radio_K);
+			this.panel3.Location = new System.Drawing.Point(641, 6);
+			this.panel3.Name = "panel3";
+			this.panel3.Size = new System.Drawing.Size(84, 55);
+			this.panel3.TabIndex = 17;
+			// 
+			// radio_M
+			// 
+			this.radio_M.AutoSize = true;
+			this.radio_M.Location = new System.Drawing.Point(8, 31);
+			this.radio_M.Name = "radio_M";
+			this.radio_M.Size = new System.Drawing.Size(54, 16);
+			this.radio_M.TabIndex = 15;
+			this.radio_M.Text = "Mbyte";
+			this.radio_M.UseVisualStyleBackColor = true;
+			this.radio_M.CheckedChanged += new System.EventHandler(this.radio_M_CheckedChanged);
+			// 
+			// radio_K
+			// 
+			this.radio_K.AutoSize = true;
+			this.radio_K.Checked = true;
+			this.radio_K.Location = new System.Drawing.Point(8, 9);
+			this.radio_K.Name = "radio_K";
+			this.radio_K.Size = new System.Drawing.Size(52, 16);
+			this.radio_K.TabIndex = 14;
+			this.radio_K.TabStop = true;
+			this.radio_K.Text = "Kbyte";
+			this.radio_K.UseVisualStyleBackColor = true;
+			this.radio_K.CheckedChanged += new System.EventHandler(this.radio_K_CheckedChanged);
+			// 
+			// lab_Vmem
+			// 
+			this.lab_Vmem.AutoSize = true;
+			this.lab_Vmem.Location = new System.Drawing.Point(510, 41);
+			this.lab_Vmem.Name = "lab_Vmem";
+			this.lab_Vmem.Size = new System.Drawing.Size(53, 12);
+			this.lab_Vmem.TabIndex = 16;
+			this.lab_Vmem.Text = "仮想メモリ";
+			// 
+			// lab_Pmem
+			// 
+			this.lab_Pmem.AutoSize = true;
+			this.lab_Pmem.Location = new System.Drawing.Point(510, 17);
+			this.lab_Pmem.Name = "lab_Pmem";
+			this.lab_Pmem.Size = new System.Drawing.Size(53, 12);
+			this.lab_Pmem.TabIndex = 15;
+			this.lab_Pmem.Text = "物理メモリ";
+			// 
+			// txt_Vmem
+			// 
+			this.txt_Vmem.Location = new System.Drawing.Point(567, 38);
+			this.txt_Vmem.Name = "txt_Vmem";
+			this.txt_Vmem.ReadOnly = true;
+			this.txt_Vmem.Size = new System.Drawing.Size(69, 19);
+			this.txt_Vmem.TabIndex = 14;
+			this.txt_Vmem.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			// 
+			// txt_Pmem
+			// 
+			this.txt_Pmem.Location = new System.Drawing.Point(567, 13);
+			this.txt_Pmem.Name = "txt_Pmem";
+			this.txt_Pmem.ReadOnly = true;
+			this.txt_Pmem.Size = new System.Drawing.Size(69, 19);
+			this.txt_Pmem.TabIndex = 13;
+			this.txt_Pmem.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			// 
 			// btn_delLog
 			// 
-			this.btn_delLog.Location = new System.Drawing.Point(382, 24);
+			this.btn_delLog.Location = new System.Drawing.Point(353, 10);
 			this.btn_delLog.Name = "btn_delLog";
-			this.btn_delLog.Size = new System.Drawing.Size(75, 23);
+			this.btn_delLog.Size = new System.Drawing.Size(62, 23);
 			this.btn_delLog.TabIndex = 12;
 			this.btn_delLog.Text = "ログ削除";
 			this.btn_delLog.UseVisualStyleBackColor = true;
@@ -260,74 +331,15 @@
 			this.worker_main.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.worker_main_ProgressChanged);
 			this.worker_main.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.worker_main_RunWorkerCompleted);
 			// 
-			// txt_Pmem
+			// btn_openini
 			// 
-			this.txt_Pmem.Location = new System.Drawing.Point(567, 13);
-			this.txt_Pmem.Name = "txt_Pmem";
-			this.txt_Pmem.ReadOnly = true;
-			this.txt_Pmem.Size = new System.Drawing.Size(69, 19);
-			this.txt_Pmem.TabIndex = 13;
-			this.txt_Pmem.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-			// 
-			// txt_Vmem
-			// 
-			this.txt_Vmem.Location = new System.Drawing.Point(567, 38);
-			this.txt_Vmem.Name = "txt_Vmem";
-			this.txt_Vmem.ReadOnly = true;
-			this.txt_Vmem.Size = new System.Drawing.Size(69, 19);
-			this.txt_Vmem.TabIndex = 14;
-			this.txt_Vmem.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-			// 
-			// lab_Pmem
-			// 
-			this.lab_Pmem.AutoSize = true;
-			this.lab_Pmem.Location = new System.Drawing.Point(510, 17);
-			this.lab_Pmem.Name = "lab_Pmem";
-			this.lab_Pmem.Size = new System.Drawing.Size(53, 12);
-			this.lab_Pmem.TabIndex = 15;
-			this.lab_Pmem.Text = "物理メモリ";
-			// 
-			// lab_Vmem
-			// 
-			this.lab_Vmem.AutoSize = true;
-			this.lab_Vmem.Location = new System.Drawing.Point(510, 41);
-			this.lab_Vmem.Name = "lab_Vmem";
-			this.lab_Vmem.Size = new System.Drawing.Size(53, 12);
-			this.lab_Vmem.TabIndex = 16;
-			this.lab_Vmem.Text = "仮想メモリ";
-			// 
-			// panel3
-			// 
-			this.panel3.Controls.Add(this.radio_M);
-			this.panel3.Controls.Add(this.radio_K);
-			this.panel3.Location = new System.Drawing.Point(641, 6);
-			this.panel3.Name = "panel3";
-			this.panel3.Size = new System.Drawing.Size(84, 55);
-			this.panel3.TabIndex = 17;
-			// 
-			// radio_M
-			// 
-			this.radio_M.AutoSize = true;
-			this.radio_M.Location = new System.Drawing.Point(8, 31);
-			this.radio_M.Name = "radio_M";
-			this.radio_M.Size = new System.Drawing.Size(54, 16);
-			this.radio_M.TabIndex = 15;
-			this.radio_M.Text = "Mbyte";
-			this.radio_M.UseVisualStyleBackColor = true;
-			this.radio_M.CheckedChanged += new System.EventHandler(this.radio_M_CheckedChanged);
-			// 
-			// radio_K
-			// 
-			this.radio_K.AutoSize = true;
-			this.radio_K.Checked = true;
-			this.radio_K.Location = new System.Drawing.Point(8, 9);
-			this.radio_K.Name = "radio_K";
-			this.radio_K.Size = new System.Drawing.Size(52, 16);
-			this.radio_K.TabIndex = 14;
-			this.radio_K.TabStop = true;
-			this.radio_K.Text = "Kbyte";
-			this.radio_K.UseVisualStyleBackColor = true;
-			this.radio_K.CheckedChanged += new System.EventHandler(this.radio_K_CheckedChanged);
+			this.btn_openini.Location = new System.Drawing.Point(429, 34);
+			this.btn_openini.Name = "btn_openini";
+			this.btn_openini.Size = new System.Drawing.Size(61, 23);
+			this.btn_openini.TabIndex = 18;
+			this.btn_openini.Text = "ini開く";
+			this.btn_openini.UseVisualStyleBackColor = true;
+			this.btn_openini.Click += new System.EventHandler(this.btn_openini_Click);
 			// 
 			// MainForm
 			// 
@@ -358,10 +370,10 @@
 			((System.ComponentModel.ISupportInitialize)(this.picbox_image)).EndInit();
 			this.panel1.ResumeLayout(false);
 			this.panel1.PerformLayout();
-			this.panel2.ResumeLayout(false);
-			this.panel2.PerformLayout();
 			this.panel3.ResumeLayout(false);
 			this.panel3.PerformLayout();
+			this.panel2.ResumeLayout(false);
+			this.panel2.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -395,6 +407,7 @@
 		private System.Windows.Forms.Panel panel3;
 		private System.Windows.Forms.RadioButton radio_M;
 		private System.Windows.Forms.RadioButton radio_K;
+		private System.Windows.Forms.Button btn_openini;
     }
 }
 
