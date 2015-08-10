@@ -12,3 +12,11 @@ GenerateDirectoryTree/ipch
 GenerateDirectoryTree/GenerateDirectoryTree/Debug
 GenerateDirectoryTree/GenerateDirectoryTree/Release
 
+#FileAnalyzer
+FileAnalyzer/FileAnalyzer/bin
+FileAnalyzer/FileAnalyzer/obj
+
+#ImageDivider
+ImageDivider/ImageDivider/bin
+ImageDivider/ImageDivider/obj
+
