@@ -67,6 +67,8 @@ namespace ImageDivider
 			InitFile();			// iniファイル初期化
 			InitLog();			// ログファイル初期化
 
+			WriteLog("---------------------------- START  ----------------------------");
+
 			InitThread();		// スレッド初期設定
 
 			InitWindows();		// ウィンドウ初期設定
@@ -342,11 +344,13 @@ namespace ImageDivider
 		}
 
 		// ログ出力
+		private void WriteLogEx(String str)
+		{
+			Util.WriteLog(this, mLog, str);
+		}
 		private void WriteLog(String str)
 		{
-			if (mLog != null) {
-				mLog.Write(str);
-			}
+			mLog.Write(str);
 		}
 
 		// メモリ関連出力
@@ -383,8 +387,7 @@ namespace ImageDivider
 		// フォーム表示
 		private void MainForm_Shown(object sender, EventArgs e)
 		{
-			WriteLog("---------------------------- START  ----------------------------");
-			WriteLog("MainForm表示");
+			WriteLogEx("MainForm表示");
 
 			if (mSubFormEnable) {
 				initSubForm();	// サブフォーム
@@ -614,10 +617,10 @@ namespace ImageDivider
 
 					// ファイルリスト抽出
 					string[] files = Directory.GetFiles(dir, "*", SearchOption.AllDirectories);
-					mLog.Write("ファイルリスト抽出完了 " + "ファイル数:" + files.Length);
+					WriteLogEx("ファイルリスト抽出完了 " + "ファイル数:" + files.Length);
 
 					// スレッド起動
-					mWc = new WorkerClass(this, dir);
+					mWc = new WorkerClass(this, dir, mLog);
 					mWc.SetRun(true);
 					mWc.SetFileList(files);
 					// 状態通知
@@ -700,14 +703,17 @@ namespace ImageDivider
 		private void MainForm_SubThreadRunning_SetImage(int idx, String FileName)
 		{
 			Bitmap bm = new Bitmap(FileName);
+			// サムネイル画像生成
 			Image thumbnail = Util.createThumbnail(bm, mThumbnail.Width, mThumbnail.Height);
 			bm.Dispose();
 
+			// サムネイル画像追加
 			imageList.Images.Add(thumbnail);
 			ListViewItem item = new ListViewItem((String)mFileNameList[idx]);
 			item.ImageIndex = idx;
 			listview_image_list.Items.Add(item);
 
+			// サブフォーム通知
 			if (mSubFormEnable) mSubForm.ListViewAdd(idx, FileName, (String)mFileNameList[idx]);
 
 			// 画像リスト追加

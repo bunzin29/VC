@@ -37,5 +37,18 @@ namespace ImageDivider
 			}
 		}
 
+		// ログ出力
+		static public void WriteLog(object cls, MyLog log, String str)
+		{
+			// 名前空間まで含めてクラス名を取得
+			var fullClassName = cls.GetType().FullName;
+			// クラス名のみ取得
+			var className = cls.GetType().Name;
+
+			if (log != null) {
+				log.Write("[" + className + "]" + str);
+			}
+		}
+
 	}
 }

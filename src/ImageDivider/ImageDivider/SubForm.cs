@@ -251,9 +251,7 @@ namespace ImageDivider
 		// ログ出力
 		private void WriteLog(String str)
 		{
-			if (mLog != null) {
-				mLog.Write(str);
-			}
+			Util.WriteLog(this, mLog, str);
 		}
 
 

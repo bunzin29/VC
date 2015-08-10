@@ -17,6 +17,7 @@ namespace ImageDivider
 		private string[] mFileList;				// ファイルリスト
 		private ArrayList mFileNameList;		// 画像ファイル名リスト
 		private bool mRun;						// 実行中
+		private MyLog mLog;						// ログ
 
 		// 状態通知
 		public delegate void SubThreadRunningEventHandler_State(int stateVal);
@@ -31,9 +32,10 @@ namespace ImageDivider
 		public event EventHandler OnSubThreadFinished;
 
 		// コンストラクタ
-		public WorkerClass(Control mainThreadForm, string dir)
+		public WorkerClass(Control mainThreadForm, string dir, MyLog log)
 		{
 			mForm = mainThreadForm;
+			mLog = log;
 		}
 
 		// ファイルリスト設定
@@ -60,6 +62,9 @@ namespace ImageDivider
 					mFileNameList = null;
 				}
 				mFileNameList = new ArrayList();
+
+				WriteLog("ファイル名取得開始");
+
 				// ファイル名
 				for (int i = 0; i < fileSize; i++) {
 					if (!mRun) return;
@@ -73,7 +78,12 @@ namespace ImageDivider
 						noUseList.Add(i);
 					}
 				}
+
+				WriteLog("ファイル名取得終了");
+
 				mForm.Invoke(OnSubThreadSetList, new object[] { mFileNameList });
+
+				WriteLog("サムネイル作成開始");
 
 				for (int i = 0; i < fileSize; i++) {
 					if (!mRun) break;
@@ -91,6 +101,8 @@ namespace ImageDivider
 						MessageBox.Show(e.Message);
 					}
 				}
+
+				WriteLog("サムネイル作成終了");
 
 				if (idxList != idxImage) {
 					// エラー表示
@@ -154,5 +166,13 @@ namespace ImageDivider
 
 			return ret;
 		}
+
+		// ログ出力
+		private void WriteLog(String str)
+		{
+			Util.WriteLog(this, mLog, str);
+		}
+
 	}
+
 }
