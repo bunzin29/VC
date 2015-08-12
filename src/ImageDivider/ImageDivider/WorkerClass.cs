@@ -18,6 +18,7 @@ namespace ImageDivider
 		private ArrayList mFileNameList;		// 画像ファイル名リスト
 		private bool mRun;						// 実行中
 		private MyLog mLog;						// ログ
+        private ArrayList mEnableExtension;     // 有効拡張子
 
 		// 状態通知
 		public delegate void SubThreadRunningEventHandler_State(int stateVal);
@@ -36,7 +37,15 @@ namespace ImageDivider
 		{
 			mForm = mainThreadForm;
 			mLog = log;
-		}
+
+            mEnableExtension = new ArrayList();
+            mEnableExtension.Add(".jpg");
+            mEnableExtension.Add(".png");
+            mEnableExtension.Add(".bmp");
+            mEnableExtension.Add(".JPG");
+            mEnableExtension.Add(".PNG");
+            mEnableExtension.Add(".BMP");
+        }
 
 		// ファイルリスト設定
 		public void SetFileList(string[] fileList)
@@ -130,46 +139,48 @@ namespace ImageDivider
 		// 画像ファイル判定
 		private bool IsImageFile(String fileName)
 		{
-			bool ret = true;
-			try {
-				System.Drawing.Image img = System.Drawing.Image.FromFile(fileName);
+            return mEnableExtension.Contains(Path.GetExtension(fileName));
 
-				//イメージのファイル形式を調べる
-				if (img.RawFormat.Equals(System.Drawing.Imaging.ImageFormat.Bmp)) {
-					//Console.WriteLine("ビットマップ (BMP) イメージ形式です");
-				} else if (img.RawFormat.Equals(System.Drawing.Imaging.ImageFormat.Gif)) {
-					//Console.WriteLine("GIF (Graphics Interchange Format) イメージ形式です");
-				} else if (img.RawFormat.Equals(System.Drawing.Imaging.ImageFormat.Jpeg)) {
-					//Console.WriteLine("JPEG (Joint Photographic Experts Group) イメージ形式です");
-				} else if (img.RawFormat.Equals(System.Drawing.Imaging.ImageFormat.Png)) {
-					//Console.WriteLine("W3C PNG (Portable Network Graphics) イメージ形式です");
-				} else if (img.RawFormat.Equals(System.Drawing.Imaging.ImageFormat.Exif)) {
-					//Console.WriteLine("Exif (Exchangeable Image File) 形式です");
-				} else if (img.RawFormat.Equals(System.Drawing.Imaging.ImageFormat.Tiff)) {
-					//Console.WriteLine("TIFF (Tagged Image File Format) イメージ形式です");
-				} else if (img.RawFormat.Equals(System.Drawing.Imaging.ImageFormat.Icon)) {
-					//Console.WriteLine("Windows アイコン イメージ形式です");
-				} else if (img.RawFormat.Equals(System.Drawing.Imaging.ImageFormat.Emf)) {
-					//Console.WriteLine("拡張メタファイル (EMF) イメージ形式です");
-				} else if (img.RawFormat.Equals(System.Drawing.Imaging.ImageFormat.Wmf)) {
-					//Console.WriteLine("Windows メタファイル (WMF) イメージ形式です");
-				} else if (img.RawFormat.Equals(System.Drawing.Imaging.ImageFormat.MemoryBmp)) {
-					//Console.WriteLine("メモリ ビットマップ イメージ形式です");
-				} else {
-					ret = false;
-				}
+            //bool ret = true;
+            //try {
+            //    System.Drawing.Image img = System.Drawing.Image.FromFile(fileName);
 
-				img.Dispose();
+            //    //イメージのファイル形式を調べる
+            //    if (img.RawFormat.Equals(System.Drawing.Imaging.ImageFormat.Bmp)) {
+            //        //Console.WriteLine("ビットマップ (BMP) イメージ形式です");
+            //    } else if (img.RawFormat.Equals(System.Drawing.Imaging.ImageFormat.Gif)) {
+            //        //Console.WriteLine("GIF (Graphics Interchange Format) イメージ形式です");
+            //    } else if (img.RawFormat.Equals(System.Drawing.Imaging.ImageFormat.Jpeg)) {
+            //        //Console.WriteLine("JPEG (Joint Photographic Experts Group) イメージ形式です");
+            //    } else if (img.RawFormat.Equals(System.Drawing.Imaging.ImageFormat.Png)) {
+            //        //Console.WriteLine("W3C PNG (Portable Network Graphics) イメージ形式です");
+            //    } else if (img.RawFormat.Equals(System.Drawing.Imaging.ImageFormat.Exif)) {
+            //        //Console.WriteLine("Exif (Exchangeable Image File) 形式です");
+            //    } else if (img.RawFormat.Equals(System.Drawing.Imaging.ImageFormat.Tiff)) {
+            //        //Console.WriteLine("TIFF (Tagged Image File Format) イメージ形式です");
+            //    } else if (img.RawFormat.Equals(System.Drawing.Imaging.ImageFormat.Icon)) {
+            //        //Console.WriteLine("Windows アイコン イメージ形式です");
+            //    } else if (img.RawFormat.Equals(System.Drawing.Imaging.ImageFormat.Emf)) {
+            //        //Console.WriteLine("拡張メタファイル (EMF) イメージ形式です");
+            //    } else if (img.RawFormat.Equals(System.Drawing.Imaging.ImageFormat.Wmf)) {
+            //        //Console.WriteLine("Windows メタファイル (WMF) イメージ形式です");
+            //    } else if (img.RawFormat.Equals(System.Drawing.Imaging.ImageFormat.MemoryBmp)) {
+            //        //Console.WriteLine("メモリ ビットマップ イメージ形式です");
+            //    } else {
+            //        ret = false;
+            //    }
 
-			}
-			catch {
-				return false;
-			}
-			finally {
+            //    img.Dispose();
 
-			}
+            //}
+            //catch {
+            //    return false;
+            //}
+            //finally {
 
-			return ret;
+            //}
+
+            //return ret;
 		}
 
 		// ログ出力
